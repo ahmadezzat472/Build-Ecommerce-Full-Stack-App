@@ -2,6 +2,7 @@ import ProductCard from "@/components/ProductCard";
 import useCustomQuery from "../hooks/useCustomQuery";
 import { Grid } from "@chakra-ui/react";
 import { IProduct } from "../interfaces";
+import ProductCardSkelton from "@/components/ProductCardSkelton";
 
 const ProductsPage = () => {
 
@@ -12,7 +13,18 @@ const ProductsPage = () => {
         url: "/products?populate=*", 
     }) 
 
-    if(isPending) return <h1>sss</h1>
+    if(isPending) 
+        return (
+            <Grid templateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap="6">
+                {
+                    Array.from({length: 20}, (_, idx) => 
+                        <ProductCardSkelton key={idx} />
+                    )
+                }
+            </Grid>
+
+        )
+    
 
     return (
         <Grid templateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap="6">
