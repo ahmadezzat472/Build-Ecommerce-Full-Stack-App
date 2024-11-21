@@ -1,15 +1,19 @@
-import { Route, Routes } from "react-router-dom";
-import HomePage from "./pages";
-import ProductsPage from "./pages/Products";
+import { RouterProvider } from "react-router-dom";
+import router from "./router";
+// import { ColorModeProvider } from "@/components/ui/color-mode"
+// import { Theme } from "@chakra-ui/react"
+
 
 function App() {
 
     return (
-        <>
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="products" element={<ProductsPage />} />
-            </Routes>
+        <>  
+            {/* <ColorModeProvider forcedTheme="dark">
+                <Theme appearance="dark"> */}
+                    <RouterProvider router={router} />
+                {/* </Theme>
+            </ColorModeProvider> */}
+            
         </>
     )
 }

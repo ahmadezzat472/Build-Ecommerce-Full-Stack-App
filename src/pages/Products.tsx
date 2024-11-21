@@ -1,8 +1,8 @@
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "../components/ProductCard";
 import useCustomQuery from "../hooks/useCustomQuery";
 import { Grid } from "@chakra-ui/react";
 import { IProduct } from "../interfaces";
-import ProductCardSkelton from "@/components/ProductCardSkelton";
+import ProductCardSkelton from "../components/ProductCardSkelton";
 
 const ProductsPage = () => {
 
@@ -24,10 +24,14 @@ const ProductsPage = () => {
             </Grid>
 
         )
+
+        if (!data) {
+            return <p>No product details found.</p>;
+        }
     
 
     return (
-        <Grid templateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap="6">
+        <Grid margin={"30px"} templateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap="6">
             {
                 data.length ? ( 
                     data.map( (prodcut: IProduct) => 

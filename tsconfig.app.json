@@ -21,11 +21,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-
-    /* for chakra */
-    "paths": {
-      "@/*": ["./src/*"]
-    }
   },
   "include": ["src", "steps.tsx"]
 }

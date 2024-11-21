@@ -1,19 +1,28 @@
-import { Provider } from "@/components/ui/provider"
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { BrowserRouter as Router } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ChakraProvider } from '@chakra-ui/react'
+// import { extendTheme } from '@chakra-ui/react'
+// const colors = {
+//   brand: {
+//     900: '#1a365d',
+//     800: '#153e75',
+//     700: '#2a69ac',
+//   },
+// }
+
+// const theme = extendTheme({ colors })
+
+// // 3. Pass the `theme` prop to the `ChakraProvider`
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
-    <Router>
-      <Provider>
+      <ChakraProvider>
         <App />
-      </Provider>
-    </Router>
+      </ChakraProvider>
   </QueryClientProvider>
   
 )
