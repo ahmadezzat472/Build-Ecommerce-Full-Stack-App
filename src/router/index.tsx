@@ -1,5 +1,6 @@
 import RootLayout from "../layout/RootLayout";
 import HomePage from "../pages";
+import LoginPage from "../pages/Login";
 import ProductDetailsPage from "../pages/ProductDetails";
 import ProductsPage from "../pages/Products";
 import {
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
                 <Route index element={<HomePage />} />
                 <Route path="products" element={<ProductsPage />} />
                 <Route path="products/:productId" element={<ProductDetailsPage />} />
+                <Route path="login" element={<LoginPage />} />
                 {/* Root Layout */}
             </Route>
             {/* <Route path="/" element={<RootLayout />} errorElement={<ErrorHandler />}>
