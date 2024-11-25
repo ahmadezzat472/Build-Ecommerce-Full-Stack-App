@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from '../../config/axios.config';
 import { createStandaloneToast } from '@chakra-ui/react';
+import cookieService from '../../services/cookieService';
 
 const {toast} = createStandaloneToast()
 
@@ -59,6 +60,15 @@ const loginSlice = createSlice({
             state.loading = false;
             state.data = action.payload;
 
+            // ** Cookies
+            const date = new Date()
+            const IN_DAYS = 3;
+            const IN_HOURS = 1000 * 60 * 60 * 24;
+            const EXPIRES_IN_Days = IN_DAYS * IN_HOURS;
+            date.setTime(date.getTime() + EXPIRES_IN_Days) 
+            const options = {path: "/", expires: date}
+            cookieService.set("jwt", action?.payload?.jwt, options)
+            
             toast({
                 title: 'Logged in Successfully',
                 description: "We've created your account for you.",
