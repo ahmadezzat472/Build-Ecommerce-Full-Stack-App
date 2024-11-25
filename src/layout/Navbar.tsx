@@ -22,6 +22,8 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import cookieService from '../services/cookieService';
+import { useSelector } from 'react-redux';
+import { selectCart } from '../app/features/cartSlice';
 
 
 interface Props {
@@ -56,10 +58,16 @@ const NavLink = (props: Props) => {
 export default function Navbar() {
     const { colorMode, toggleColorMode } = useColorMode()
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const {cartItems} = useSelector(selectCart) // const {cartItems} = useSelector((state: RootState) => state.Cart) 
+    
 
     const logoutHandler = () => {
         cookieService.remove("jwt")
         window.location.reload()
+    }
+
+    const addToCartHandler = () => {
+
     }
 
     return (
@@ -87,7 +95,7 @@ export default function Navbar() {
                             <Button onClick={toggleColorMode}>
                                 {colorMode === 'light' ? <IoMoonOutline /> : <IoSunny />}
                             </Button>
-                            <Button>Cart(0)</Button>
+                            <Button onClick={addToCartHandler}>Cart({cartItems.length})</Button>
                             {
                                 token ? (
                                     <Menu>

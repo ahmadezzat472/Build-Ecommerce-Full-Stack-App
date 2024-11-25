@@ -2,6 +2,8 @@ import { Badge, Box, Card, Flex, HStack, Image, Text, Button, Stack, Heading, Ca
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import useCustomQuery from "../hooks/useCustomQuery"
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../app/features/cartSlice";
 
 
 /* ___________________ Type & interface ___________________ */
@@ -22,10 +24,16 @@ const ProductDetailsPage = () => {
         /* ${queryKey} => when update on item occure => the id of item will change => 
          thus, queryKey Changes => then useCustomQuery is execute and this we need to get new updated data */
         queryKey: ["product", productId!], // Force TypeScript to treat `productId` as non-null
-        url: `/products/${documentId}?populate=*`, 
+        url: `/products/${documentId}?populate=*&fields=title,description,price`, 
     }) 
 
+    const dispatch = useDispatch()
+
     const goBack = () => navigate(-1)
+
+    const addToCartHandler = () => {
+        dispatch(addToCart(data))
+    }
 
     /* ___________________ Render ___________________ */
     if(!isPending) console.log(data);
@@ -84,7 +92,13 @@ const ProductDetailsPage = () => {
                         </HStack>
                     </CardBody>
                     <CardFooter paddingBottom={"12px"}>
-                        <Button variant='solid' colorScheme='blue' width={"full"} textTransform={"capitalize"}>
+                        <Button 
+                            variant='solid' 
+                            colorScheme='blue' 
+                            width={"full"} 
+                            textTransform={"capitalize"}
+                            onClick={addToCartHandler}
+                        >
                             add to cart
                         </Button>
                     </CardFooter>
