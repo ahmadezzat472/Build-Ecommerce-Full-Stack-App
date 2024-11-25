@@ -1,3 +1,4 @@
+import ProtectedRoute from "../auth/ProtectedRoute";
 import RootLayout from "../layout/RootLayout";
 import HomePage from "../pages";
 import LoginPage from "../pages/Login";
@@ -8,18 +9,31 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
 } from "react-router-dom";
+import cookieService from "../services/cookieService";
 
+/* _________________ Cookies _________________ */
+const token = cookieService.get("jwt");
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <>  
+            {/* Root Layout */}
             <Route path="/" element={<RootLayout />} >
                 <Route index element={<HomePage />} />
                 <Route path="products" element={<ProductsPage />} />
                 <Route path="products/:productId" element={<ProductDetailsPage />} />
-                <Route path="login" element={<LoginPage />} />
-                {/* Root Layout */}
             </Route>
+            <Route 
+                path="login" 
+                element={
+                    <ProtectedRoute isAuthenticated={token} redirectPath="/" >
+                        <LoginPage />
+                    </ProtectedRoute>
+                } 
+            />
+
+
+
             {/* <Route path="/" element={<RootLayout />} errorElement={<ErrorHandler />}>
                 <Route
                     index
