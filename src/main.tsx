@@ -3,6 +3,9 @@ import './index.css'
 import App from './App.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ChakraProvider } from '@chakra-ui/react'
+import { Provider } from 'react-redux'
+import store from './app/store.ts'
+
 // import { extendTheme } from '@chakra-ui/react'
 // const colors = {
 //   brand: {
@@ -19,10 +22,12 @@ import { ChakraProvider } from '@chakra-ui/react'
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
-  <QueryClientProvider client={queryClient}>
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
       <ChakraProvider>
         <App />
       </ChakraProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </Provider>
   
 )
