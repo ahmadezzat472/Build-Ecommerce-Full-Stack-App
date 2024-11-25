@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux';
 import { productApiSlice } from './features/products/productsSlice';
+import loginSlice from './features/loginSlice';
 
 export const store = configureStore({
     reducer: {
+        Login: loginSlice,
         [productApiSlice.reducerPath]: productApiSlice.reducer
     },
     // Adding the api middleware enables caching, invalidation, polling,

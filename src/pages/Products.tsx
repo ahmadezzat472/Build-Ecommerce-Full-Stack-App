@@ -5,9 +5,8 @@ import { IProduct } from "../interfaces";
 import ProductCardSkelton from "../components/ProductCardSkelton";
 import { useGetProductSliceQuery } from "../app/features/products/productsSlice";
 
-
 const ProductsPage = () => {
-    const {data, isLoading, isError, error  } = useGetProductSliceQuery()
+    const {data, isLoading, isError, error  } = useGetProductSliceQuery({})
 
     // const { data, isPending } = useCustomQuery({
     //     /* ${queryKey} => when update on item occure => the id of item will change => 

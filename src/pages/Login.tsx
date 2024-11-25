@@ -17,14 +17,18 @@ import {
 import { ChangeEventHandler, FormEventHandler, useState } from 'react'
 import { BiSolidShow } from "react-icons/bi";
 import { IoMdEyeOff } from "react-icons/io";
+import { userLogin } from '../app/features/loginSlice';
+import { RootState, useAppDispatch } from '../app/store';
+import { useSelector } from 'react-redux';
 
 interface IUser {
     identifier: string;
     password: string;
 }
 
-
 export default function LoginPage() {
+    const dispatch = useAppDispatch()
+    const {data, error, loading} =  useSelector( (state: RootState) => state.Login )
     const [isEmail, setIsEmail] = useState<boolean>(false)
     const [isPassword, setIsPassword] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -52,8 +56,7 @@ export default function LoginPage() {
 
         setIsEmail(false)
         setIsPassword(false)
-        console.log(user);
-        
+        dispatch(userLogin(user))
     }
 
     const onChangehandler: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -134,6 +137,7 @@ export default function LoginPage() {
                                 _hover={
                                     isEmail || isPassword ? {bg: 'red.500'} : {bg: 'blue.500'}
                                 }
+                                isLoading={loading}
                             >
                                 Sign in
                             </Button>
