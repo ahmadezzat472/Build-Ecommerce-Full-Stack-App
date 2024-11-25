@@ -2,9 +2,11 @@ import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux';
 import { productApiSlice } from './features/products/productsSlice';
 import loginSlice from './features/loginSlice';
+import cartSlice from './features/cartSlice';
 
 export const store = configureStore({
     reducer: {
+        Cart: cartSlice,
         Login: loginSlice,
         [productApiSlice.reducerPath]: productApiSlice.reducer
     },
