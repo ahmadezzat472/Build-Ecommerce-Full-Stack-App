@@ -21,13 +21,17 @@ import { IoSunny, IoMoonOutline  } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import { Link } from 'react-router-dom';
+import cookieService from '../services/cookieService';
 
 
 interface Props {
     children: ReactNode
 }
 
-const Links = ['Dashboard', 'products', 'Login']
+/* _________________ Cookies _________________ */
+const token = cookieService.get("jwt");
+
+const Links = ['Dashboard', 'products']
 
 const NavLink = (props: Props) => {
     const { children } = props
@@ -53,6 +57,11 @@ export default function Navbar() {
     const { colorMode, toggleColorMode } = useColorMode()
     const { isOpen, onOpen, onClose } = useDisclosure()
 
+    const logoutHandler = () => {
+        cookieService.remove("jwt")
+        window.location.reload()
+    }
+
     return (
         <>
             <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
@@ -74,42 +83,55 @@ export default function Navbar() {
                     </HStack>
 
                     <Flex alignItems={'center'}>
-                        <Stack direction={'row'} spacing={7}>
-                        <Button onClick={toggleColorMode}>
-                            {colorMode === 'light' ? <IoMoonOutline /> : <IoSunny />}
-                        </Button>
-
-                        <Menu>
-                            <MenuButton
-                                as={Button}
-                                rounded={'full'}
-                                variant={'link'}
-                                cursor={'pointer'}
-                                minW={0}>
-                                <Avatar
-                                    size={'sm'}
-                                    src={'https://avatars.dicebear.com/api/male/username.svg'}
-                                />
-                            </MenuButton>
-                                <MenuList alignItems={'center'}>
-                                <br />
-                                <Center>
-                                    <Avatar
-                                        size={'2xl'}
-                                        src={'https://avatars.dicebear.com/api/male/username.svg'}
-                                    />
-                                </Center>
-                                <br />
-                                <Center>
-                                    <p>Username</p>
-                                </Center>
-                                <br />
-                                <MenuDivider />
-                                <MenuItem>Your Servers</MenuItem>
-                                <MenuItem>Account Settings</MenuItem>
-                                <MenuItem>Logout</MenuItem>
-                            </MenuList>
-                        </Menu>
+                        <Stack direction={'row'} alignItems={"center"} spacing={5}>
+                            <Button onClick={toggleColorMode}>
+                                {colorMode === 'light' ? <IoMoonOutline /> : <IoSunny />}
+                            </Button>
+                            <Button>Cart(0)</Button>
+                            {
+                                token ? (
+                                    <Menu>
+                                        <MenuButton
+                                            as={Button}
+                                            rounded={'full'}
+                                            variant={'link'}
+                                            cursor={'pointer'}
+                                            minW={0}>
+                                            <Avatar
+                                                size={'sm'}
+                                                src={'https://avatars.dicebear.com/api/male/username.svg'}
+                                            />
+                                        </MenuButton>
+                                        <MenuList alignItems={'center'}>
+                                            <br />
+                                            <Center>
+                                                <Avatar
+                                                    size={'2xl'}
+                                                    src={'https://avatars.dicebear.com/api/male/username.svg'}
+                                                />
+                                            </Center>
+                                            <br />
+                                            <Center>
+                                                <p>Username</p>
+                                            </Center>
+                                            <br />
+                                            <MenuDivider />
+                                            <MenuItem>Your Servers</MenuItem>
+                                            <MenuItem>Account Settings</MenuItem>
+                                            <MenuItem onClick={logoutHandler}>Logout</MenuItem>
+                                        </MenuList>
+                                    </Menu>
+                                ) : (
+                                    <Button
+                                        as={Link}
+                                        to={"/login"}
+                                        variant={'solid'}
+                                        colorScheme={'teal'}
+                                    >
+                                        Login
+                                    </Button>
+                                )
+                            }
                         </Stack>
                     </Flex>
                 </Flex>

@@ -71,11 +71,16 @@ const loginSlice = createSlice({
             
             toast({
                 title: 'Logged in Successfully',
-                description: "We've created your account for you.",
+                description: "You will navigate to the Home page after 2 seconds to login.",
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
             })
+
+            setTimeout(() => {
+                // ** need to reload page
+                location.replace("/")
+            }, 2000);
         })
 
         // ** rejected
