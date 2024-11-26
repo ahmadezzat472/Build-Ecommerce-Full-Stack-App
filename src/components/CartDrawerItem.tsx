@@ -5,9 +5,9 @@ interface IProps {
     item: ICartProducts
 }
 
-const CartDrawerItem = (item: IProps) => {
+const CartDrawerItem = ({item}: IProps) => {
     // const  = item
-    const {title, price, quantity, thumbnail} = item.item
+    const {title, price, quantity, thumbnail} = item
     /* ___________________ State ___________________ */
     const serverUrl = import.meta.env.VITE_SERVER_URL
 
