@@ -13,7 +13,7 @@ import { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { isOpenCartDrawerAction, selectGlobal } from '../app/features/globalSlice'
 import CartDrawerItem from './CartDrawerItem'
-import { ICartProducts, selectCart } from '../app/features/cartSlice'
+import { clearCart, ICartProducts, selectCart } from '../app/features/cartSlice'
 
 const CartDrawer = () => {
     const btnRef = useRef<HTMLButtonElement | null>(null)
@@ -22,6 +22,8 @@ const CartDrawer = () => {
     const dispatch = useDispatch()
 
     const onClose = () => dispatch(isOpenCartDrawerAction())
+    const RemoveAllItemHandler = () => dispatch(clearCart())
+
     return (
         <Drawer
             isOpen={isOpenCartDrawer}
@@ -45,7 +47,11 @@ const CartDrawer = () => {
                 </DrawerBody>
 
                 <DrawerFooter>
-                    <Button colorScheme='red' variant='outline' onClick={onClose}>
+                    <Button 
+                        colorScheme='red' 
+                        variant='outline' 
+                        onClick={RemoveAllItemHandler}
+                    >
                         Clear All
                     </Button>
                 </DrawerFooter>

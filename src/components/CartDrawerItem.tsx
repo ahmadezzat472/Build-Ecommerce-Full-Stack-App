@@ -1,15 +1,20 @@
-import { Badge, Card, CardBody, Heading, HStack, Image, Text } from '@chakra-ui/react'
-import { ICartProducts } from '../app/features/cartSlice'
+import { Badge, Button, Card, CardBody, Heading, HStack, Image, Text } from '@chakra-ui/react'
+import { ICartProducts, removeFromCart } from '../app/features/cartSlice'
+import { useDispatch } from 'react-redux'
 
 interface IProps {
     item: ICartProducts
 }
 
 const CartDrawerItem = ({item}: IProps) => {
-    // const  = item
-    const {title, price, quantity, thumbnail} = item
+    const {id, title, price, quantity, thumbnail} = item
     /* ___________________ State ___________________ */
+    const dispatch = useDispatch()
     const serverUrl = import.meta.env.VITE_SERVER_URL
+
+    const removeItemhandler = (id: number) => {
+        dispatch(removeFromCart(id))
+    }
 
     return (
         <Card 
@@ -28,11 +33,16 @@ const CartDrawerItem = ({item}: IProps) => {
                         </Text>
                         <Badge fontSize={"xs"}>${price}</Badge>
                     </HStack>
-                    {/* <Text 
-                        fontWeight={"bold"} fontSize={"xs"}
+                    <Button 
+                        variant='solid' 
+                        colorScheme='red' 
+                        fontSize={"sm"} 
+                        padding={"2px"} 
+                        h={"fit-content"}
+                        onClick={() => removeItemhandler(id)}
                     >
-                        data.price
-                    </Text> */}
+                        Add to cart
+                    </Button>
                 </CardBody>
             </HStack>
         </Card>

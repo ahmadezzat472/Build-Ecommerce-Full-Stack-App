@@ -13,7 +13,7 @@ export const addItemToCart = (newItem: ICartProducts, cartItems: ICartProducts[]
             title: 'Added to your Cart',
             description: "this item already exist, the quantity will be increased",
             status: 'success',
-            duration: 9000,
+            duration: 2000,
             isClosable: true,
         })
 
@@ -24,8 +24,28 @@ export const addItemToCart = (newItem: ICartProducts, cartItems: ICartProducts[]
     toast({
         title: 'Added to your Cart',
         status: 'success',
-        duration: 9000,
+        duration: 2000,
         isClosable: true,
     })
     return [...cartItems, {...newItem, quantity: 1}]    
+}
+
+export const removeItemFromCart = (itemId: number, cartItems: ICartProducts[]) => {
+    toast({
+        title: 'Deleted from your Cart',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+    })
+    return cartItems.filter( item => item.id !==  itemId )
+}
+
+export const clearItemsFromCart = () => {
+    toast({
+        title: 'Clear all from your Cart',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+    })
+    return [];
 }
