@@ -6,6 +6,7 @@ import {
     DrawerContent,
     DrawerCloseButton,
     Button,
+    DrawerBody,
 } from '@chakra-ui/react'
 import { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,7 +28,10 @@ const CartDrawer = () => {
         <DrawerOverlay />
             <DrawerContent>
                 <DrawerCloseButton />
-                <DrawerHeader>Cart Items</DrawerHeader>
+                <DrawerHeader borderBottomWidth='1px'>Cart Items</DrawerHeader>
+
+                <DrawerBody>
+                </DrawerBody>
 
                 <DrawerFooter>
                     <Button colorScheme='red' variant='outline' onClick={onClose}>

@@ -21,7 +21,7 @@ import { IoSunny, IoMoonOutline  } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import { Link } from 'react-router-dom';
-import cookieService from '../services/cookieService';
+import cookieService from '../services/CookieService';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCart } from '../app/features/cartSlice';
 import { isOpenCartDrawerAction } from '../app/features/globalSlice';
@@ -61,8 +61,6 @@ export default function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const {cartItems} = useSelector(selectCart) // const {cartItems} = useSelector((state: RootState) => state.Cart) 
     const dispatch = useDispatch()
-
-
 
     const logoutHandler = () => {
         cookieService.remove("jwt")

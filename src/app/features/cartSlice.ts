@@ -1,9 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../store';
-import { IProduct } from '../../interfaces';
+import { addItemToCart } from '../../utils';
+
+export interface ICartProducts {
+    id: number;
+    quantity: number;
+    documentId: string;
+    title: string;
+    description: string;
+    price: number;
+    stock: number;
+    category: {
+        title: string;
+    };
+    thumbnail: {
+        url: string;
+    };
+} 
 
 interface IInitialState {
-    cartItems : IProduct[]
+    cartItems : ICartProducts[]
 }
 
 const initialState: IInitialState = {
@@ -15,7 +31,9 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         addToCart: (state, action) => {
-            state.cartItems = [...state.cartItems, action.payload]
+            state.cartItems = addItemToCart(action.payload, state.cartItems)
+            console.log(state.cartItems);
+            
         }
     }
 })
