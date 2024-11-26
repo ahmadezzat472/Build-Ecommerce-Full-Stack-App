@@ -22,8 +22,9 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import cookieService from '../services/cookieService';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectCart } from '../app/features/cartSlice';
+import { isOpenCartDrawerAction } from '../app/features/globalSlice';
 
 
 interface Props {
@@ -59,7 +60,9 @@ export default function Navbar() {
     const { colorMode, toggleColorMode } = useColorMode()
     const { isOpen, onOpen, onClose } = useDisclosure()
     const {cartItems} = useSelector(selectCart) // const {cartItems} = useSelector((state: RootState) => state.Cart) 
-    
+    const dispatch = useDispatch()
+
+
 
     const logoutHandler = () => {
         cookieService.remove("jwt")
@@ -67,7 +70,7 @@ export default function Navbar() {
     }
 
     const addToCartHandler = () => {
-
+        dispatch(isOpenCartDrawerAction())
     }
 
     return (
