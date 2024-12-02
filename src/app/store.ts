@@ -1,17 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import { productApiSlice } from "./features/productsSlice";
+import { productApiSlice } from "./services/productsSlice";
 import loginSlice from "./features/loginSlice";
 import cartSlice from "./features/cartSlice";
 import globalSlice from "./features/globalSlice";
-import { persistStore, persistReducer } from 'redux-persist';
+import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/es/storage";
-
 
 // Redux Persist configuration
 const persistConfig = {
-  key: 'cart', // Key to store data in storage
-  storage,     // Storage mechanism (localStorage, etc.)
+  key: "cart", // Key to store data in storage
+  storage, // Storage mechanism (localStorage, etc.)
 };
 
 // Create persisted reducer

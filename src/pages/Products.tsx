@@ -3,7 +3,7 @@ import ProductCard from "../components/ProductCard";
 import { Grid } from "@chakra-ui/react";
 import { IProduct } from "../interfaces";
 import ProductCardSkelton from "../components/ProductCardSkelton";
-import { useGetProductSliceQuery } from "../app/features/productsSlice";
+import { useGetProductSliceQuery } from "../app/services/productsSlice";
 
 const ProductsPage = () => {
   const { data, isLoading, isError, error } = useGetProductSliceQuery({});
@@ -36,8 +36,8 @@ const ProductsPage = () => {
       gap="6"
     >
       {data.data.length ? (
-        data.data.map((prodcut: IProduct) => (
-          <ProductCard product={prodcut} key={prodcut.id} />
+        data.data.map((product: IProduct) => (
+          <ProductCard product={product} key={product.id} />
         ))
       ) : (
         <div>no products</div>

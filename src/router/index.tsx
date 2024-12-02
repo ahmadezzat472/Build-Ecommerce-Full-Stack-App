@@ -7,6 +7,8 @@ import ProductsPage from "../pages/Products";
 import { Route, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
 import cookieService from "../services/CookieService";
 import DashboardLayout from "../layout/DashboardLayout";
+import DashboardProducts from "../pages/dashboard/Products";
+import Dashboard from "../pages/dashboard";
 
 /* _________________ Cookies _________________ */
 const token = cookieService.get("jwt");
@@ -23,8 +25,8 @@ const router = createBrowserRouter(
 
             {/* Dashboard Layout */}
             <Route path="/dashboard" element={<DashboardLayout />} >
-                <Route index element={<h1>home</h1>} />
-                <Route path="products" element={<h1>produc</h1>} />
+                <Route index element={<Dashboard />} />
+                <Route path="products" element={<DashboardProducts />} />
                 <Route path="categories" element={<h1>home</h1>} />
             </Route>
 

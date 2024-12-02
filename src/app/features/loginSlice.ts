@@ -38,7 +38,6 @@ export const userLogin = createAsyncThunk< null/* The returned value (success ca
         const {rejectWithValue} = thunkAPI
         try{
             const response = await axiosInstance.post("/auth/local", user);
-            console.log(response.data);
             return response.data;
         } catch(error) {        
             return rejectWithValue(error as IError);
