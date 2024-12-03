@@ -20,10 +20,24 @@ interface IProps {
     okTxt?: string;
     variant?: "solid" | "outline" | "ghost" | "link";
     colorScheme?: "gray" | "red" | "orange" | "yellow" | "green" | "teal" | "blue" | "pink";
+    onOkHandler?: (id: string) => void
+    isLoading?: boolean;
+
 }
 
-export default function CustomAlertDialog({isOpen, onOpen, onClose, title, description, cancelTxt = "Cancel", okTxt= "Yes", variant= "solid", colorScheme = "gray" } : IProps) {
-    const cancelRef = React.useRef()
+const CustomAlertDialog = ({
+    isOpen, 
+    onClose, 
+    title, 
+    description, 
+    cancelTxt = "Cancel", 
+    okTxt= "Yes", 
+    variant= "solid", 
+    colorScheme = "gray", 
+    onOkHandler, 
+    isLoading,
+} : IProps) => {
+    const cancelRef = React.useRef(null)
 
     return (
         <>
@@ -34,8 +48,10 @@ export default function CustomAlertDialog({isOpen, onOpen, onClose, title, descr
                 isOpen={isOpen}
                 isCentered
             >
-                <AlertDialogOverlay />
-        
+                <AlertDialogOverlay
+                    backdropFilter='auto'
+                    backdropBlur='2px'
+                />
                 <AlertDialogContent>
                     <AlertDialogHeader>{title}</AlertDialogHeader>
                     <AlertDialogCloseButton />
@@ -46,7 +62,7 @@ export default function CustomAlertDialog({isOpen, onOpen, onClose, title, descr
                         <Button ref={cancelRef} onClick={onClose}>
                             {cancelTxt}
                         </Button>
-                        <Button colorScheme={colorScheme} ml={3} variant={variant}>
+                        <Button colorScheme={colorScheme} ml={3} variant={variant} onClick={onOkHandler} isLoading={isLoading}>
                             {okTxt}
                         </Button>
                     </AlertDialogFooter>
@@ -55,3 +71,5 @@ export default function CustomAlertDialog({isOpen, onOpen, onClose, title, descr
         </>
     )
 }
+
+export default CustomAlertDialog;

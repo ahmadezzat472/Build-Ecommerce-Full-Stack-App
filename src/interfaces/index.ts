@@ -1,5 +1,5 @@
 export interface IProduct {
-    id: number;
+    id: number | undefined;
     documentId: string;
     title: string;
     description: string;
