@@ -19,7 +19,8 @@ interface IProps {
     variant?: "solid" | "outline" | "ghost" | "link";
     colorScheme?: "gray" | "red" | "orange" | "yellow" | "green" | "teal" | "blue" | "pink";
     children: ReactNode;
-    onOkClick: () => void
+    onOkClick: () => void;
+    isLoading: boolean;
 }
 
 const CustomModal = ({
@@ -31,7 +32,8 @@ const CustomModal = ({
     variant= "solid", 
     colorScheme = "gray", 
     children,
-    onOkClick
+    onOkClick,
+    isLoading,
 } : IProps) => {
     const initialRef = React.useRef(null)
     const finalRef = React.useRef(null)
@@ -61,6 +63,7 @@ const CustomModal = ({
                             colorScheme={colorScheme}
                             variant={variant} 
                             mr={3}
+                            isLoading={isLoading}
                         >
                             {okTxt}
                         </Button>

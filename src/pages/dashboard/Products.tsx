@@ -1,4 +1,4 @@
-import { useDeleteProductSliceMutation, useGetProductSliceQuery } from '../../app/services/productsSlice'
+import { useDeleteProductSliceMutation, useGetProductSliceQuery, useUpdateProductSliceMutation } from '../../app/services/productsSlice'
 import {
     Table,
     Thead,
@@ -34,19 +34,9 @@ import { useEffect, useState } from 'react'
 import CustomModal from '../../components/Modal'
 import React from 'react'
 
-export interface IDefaultProduct {
-    documentId: string;
-    title: string;
-    description: string;
-    price: number;
-    stock: number;
-    category: {
-        title: string;
-    };
-    thumbnail: File | undefined;
-} 
 
 const defaultProduct = {
+    id: 0,
     documentId: "",
     title: "",
     description: "",
@@ -55,7 +45,9 @@ const defaultProduct = {
     category: {
         title: "",
     },
-    thumbnail: undefined,
+    thumbnail: {
+        url: "",
+    },
 }
 
 const DashboardProducts = () => {
@@ -64,16 +56,23 @@ const DashboardProducts = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen:isOpenModal , onOpen:onOpenModal, onClose:onCloseModal } = useDisclosure()
     const {isLoading, data, error, isError} = useGetProductSliceQuery({})
-    const [ dispatchDeleteProduct, {isLoading: isLoadingDelete, isSuccess} ] = useDeleteProductSliceMutation()
+    const [ dispatchDeleteProduct, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteProductSliceMutation()
+    const [ dispatchUpdateProduct, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateProductSliceMutation()
     const [productClickedId, setProductClickedId] = useState<string>("")
-    const [productClickedEdit, setProductClickedEdit] = useState<IDefaultProduct>(defaultProduct)
+    const [productClickedEdit, setProductClickedEdit] = useState<IProduct>(defaultProduct)
+    const [thumbnail, setThumbnail] = useState<File>()
 
     useEffect( () => {
-        if(isSuccess){
+        if(isSuccessDelete){
             setProductClickedId("")
             onClose()
         }
-    }, [isSuccess])
+
+        if(isSuccessUpdate){
+            setProductClickedEdit(defaultProduct)
+            onCloseModal()
+        }
+    }, [isSuccessDelete, isSuccessUpdate])
 
     const onChangeHandler: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
         const {name, value} = event.target
@@ -91,13 +90,36 @@ const DashboardProducts = () => {
     
     const thumbnailHandler: React.ChangeEventHandler<HTMLInputElement>= (e) => {
         const value = e.target.files?.[0];
-        setProductClickedEdit({...productClickedEdit, thumbnail:value })
+        setThumbnail(value)
     }
+
+    const handleUpdate = async (id: string, dataForm: FormData) => {
+        await dispatchUpdateProduct({
+            id,
+            productData: dataForm,
+        });
+    };
     
     const submitUpdateHandler = () => {
-        console.log(productClickedEdit);
-        
+        const dataForm = new FormData()
+        dataForm.append(
+            "data",
+            JSON.stringify({
+                title: productClickedEdit.title,
+                description: productClickedEdit.description,
+                price: productClickedEdit.price,
+                stock: productClickedEdit.stock,
+            })
+        );
+
+        if (thumbnail) {
+            dataForm.append("files.thumbnail", thumbnail);
+        }
+
+        handleUpdate(productClickedEdit.documentId, dataForm)
     }
+
+
 
     if(isLoading) {
         return <ProductTableSkelton />
@@ -203,6 +225,7 @@ const DashboardProducts = () => {
                 okTxt='Updated'
                 colorScheme="blue"
                 onOkClick={submitUpdateHandler}
+                isLoading={isLoadingUpdate}
             >
                 <ModalBody as={"form"} pb={6}>
                     <FormControl>
