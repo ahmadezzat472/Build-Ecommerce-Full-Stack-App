@@ -38,10 +38,22 @@ export const productApiSlice = createApi({
         }),
 
         updateProductSlice: builder.mutation({
-            query: ({ id, productData }) => {
+            query: ({ id, productData }) => ({
+                url: `/api/products/${id}`,
+                method: "PUT", 
+                headers: {
+                    Authorization: `Bearer ${jwt}`,
+                },
+                body: productData, // Updated product data
+            }),
+            invalidatesTags: ["Product"], // Invalidate the "Product" tag after an update
+        }),
+
+        addProductSlice: builder.mutation({
+            query: (productData) => {
                 return {
-                    url: `/api/products/${id}`,
-                    method: "PUT", 
+                    url: `/api/products`,
+                    method: "POST", 
                     headers: {
                         Authorization: `Bearer ${jwt}`,
                     },
@@ -53,4 +65,4 @@ export const productApiSlice = createApi({
     }),
 })
 
-export const { useGetProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation } = productApiSlice;
+export const { useGetProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation, useAddProductSliceMutation } = productApiSlice;

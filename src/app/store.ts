@@ -6,6 +6,7 @@ import cartSlice from "./features/cartSlice";
 import globalSlice from "./features/globalSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/es/storage";
+import networkSlice from "./features/networkSlice";
 
 // Redux Persist configuration
 const persistConfig = {
@@ -18,6 +19,7 @@ const persistedReducer = persistReducer(persistConfig, cartSlice);
 
 export const store = configureStore({
   reducer: {
+    Network: networkSlice,
     Global: globalSlice,
     Cart: persistedReducer,
     Login: loginSlice,
