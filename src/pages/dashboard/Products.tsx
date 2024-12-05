@@ -33,6 +33,8 @@ import { FaPen } from 'react-icons/fa6'
 import { useEffect, useState } from 'react'
 import CustomModal from '../../components/Modal'
 import React from 'react'
+import { selectNetwork } from '../../app/features/networkSlice'
+import { useSelector } from 'react-redux'
 
 
 const defaultProduct = {
@@ -56,13 +58,15 @@ const DashboardProducts = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen:isOpenModal , onOpen:onOpenModal, onClose:onCloseModal } = useDisclosure()
     const { isOpen:isOpenModalAdd , onOpen:onOpenModalAdd, onClose:onCloseModalAdd } = useDisclosure()
-    const {isLoading, data, error, isError} = useGetProductSliceQuery({})
+    const {isLoading, data, isError} = useGetProductSliceQuery({})
     const [ dispatchDeleteProduct, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteProductSliceMutation()
     const [ dispatchUpdateProduct, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateProductSliceMutation()
     const [ dispatchAddProduct, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddProductSliceMutation()
     const [productClickedId, setProductClickedId] = useState<string>("")
     const [productClickedEdit, setProductClickedEdit] = useState<IProduct>(defaultProduct)
     const [thumbnail, setThumbnail] = useState<File>()
+    const { isOnline } = useSelector(selectNetwork)
+
 
     useEffect( () => {
         if(isSuccessDelete){
@@ -73,6 +77,11 @@ const DashboardProducts = () => {
         if(isSuccessUpdate){
             setProductClickedEdit(defaultProduct)
             onCloseModal()
+        }
+
+        if(isSuccessAdd){
+            setProductClickedEdit(defaultProduct)
+            onCloseModalAdd()
         }
     }, [isSuccessDelete, isSuccessUpdate])
 
@@ -123,9 +132,9 @@ const DashboardProducts = () => {
 
 
 
-    const handleAdd = async (dataForm) => {
-        await dispatchAddProduct(dataForm);
-    };
+    // const handleAdd = async (dataForm) => {
+    //     await dispatchAddProduct(dataForm);
+    // };
     
     const submitAddHandler = () => {
         // const dataForm = {
@@ -161,12 +170,12 @@ const DashboardProducts = () => {
 
 
 
-    if(isLoading) {
+    if(isLoading || !isOnline) {
         return <ProductTableSkelton />
     }
 
     if (isError) {
-        return <p>{error.data?.error?.message}</p>;
+        // return <p>{error.data?.error?.message}</p>;
     }
 
     return (
