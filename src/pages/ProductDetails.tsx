@@ -64,11 +64,13 @@ const ProductDetailsPage = () => {
                 overflow='hidden'
                 variant='outline'
                 mx={"auto"}
+                mb={100}
             >
                 <Image
                     objectFit='cover'
                     maxW={{ base: '100%', sm: '250px' }}
-                    src={`${serverUrl}${data.thumbnail.url}`}
+                    // src={`${serverUrl}${data.thumbnail.url}`}
+                    src={`../../public/thumbnail_images_360fdccef6.jpg`}
                     alt={data.title}
                 />
 

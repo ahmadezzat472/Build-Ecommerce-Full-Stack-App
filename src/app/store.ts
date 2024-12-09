@@ -7,6 +7,7 @@ import globalSlice from "./features/globalSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/es/storage";
 import networkSlice from "./features/networkSlice";
+import { categoryApiSlice } from "./services/CategorySlice";
 
 // Redux Persist configuration
 const persistConfig = {
@@ -24,12 +25,13 @@ export const store = configureStore({
     Cart: persistedReducer,
     Login: loginSlice,
     [productApiSlice.reducerPath]: productApiSlice.reducer,
+    [categoryApiSlice.reducerPath]: categoryApiSlice.reducer,
   },
 
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(productApiSlice.middleware),
+    getDefaultMiddleware().concat(productApiSlice.middleware, categoryApiSlice.middleware),
 });
 
 // Create persistor

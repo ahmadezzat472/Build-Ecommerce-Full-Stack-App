@@ -2,43 +2,49 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from '../../config/axios.config';
 import { createStandaloneToast } from '@chakra-ui/react';
 import cookieService from '../../services/CookieService';
+import { IUser } from '../../interfaces';
 
 const {toast} = createStandaloneToast()
 
-interface IUser {
-    identifier: string;
-    password: string;
-}
-
-interface IError {
+export interface IError {
     response: {
         data: {
-            error: {
-                message: string;
-            };
+            error: string;
         };
     };
 }
 
+interface IResponseData {
+    success: boolean;
+    results: {
+        token: string;
+    }
+}
+
 interface IInitialState {
-    data: null;
-    loading: boolean
-    error: unknown 
+    data: IResponseData | null;
+    isLoading: boolean
+    isError: boolean
+    error: IError | unknown;
 }
 
 const initialState: IInitialState = {
     data: null,
-    loading: false,
+    isLoading: false,
+    isError: false,
     error: null,
 }
 
 // First, create the thunk
-export const userLogin = createAsyncThunk< null/* The returned value (success case)*/, IUser /*The argument type*/, { rejectValue: IError } /*The rejected value type*/>
-    ("products/productsSlice", async(user: IUser, thunkAPI) => {
+export const userLogin = createAsyncThunk< 
+    IResponseData/* The returned value (success case)*/, 
+    IUser /*The argument type*/, 
+    { rejectValue: IError } /*The rejected value type*/
+> ("products/productsSlice", async(user: IUser, thunkAPI) => {
         const {rejectWithValue} = thunkAPI
         try{
-            const response = await axiosInstance.post("/auth/local", user);
-            return response.data;
+            const response = await axiosInstance.post("auth/signin", user);
+            return response.data as IResponseData;
         } catch(error) {        
             return rejectWithValue(error as IError);
         }
@@ -51,13 +57,13 @@ const loginSlice = createSlice({
     extraReducers: (builder) => {
         // ** pending
         builder.addCase(userLogin.pending, (state) => {
-            state.loading = true;
+            state.isLoading = true;
         })
 
         // ** fulfilled = success
         builder.addCase(userLogin.fulfilled, (state, action) => {
-            state.loading = false;
-            state.data = action.payload;
+            state.isLoading = false;
+            state.data = action.payload;            
 
             // ** Cookies
             const date = new Date()
@@ -66,13 +72,13 @@ const loginSlice = createSlice({
             const EXPIRES_IN_Days = IN_DAYS * IN_HOURS;
             date.setTime(date.getTime() + EXPIRES_IN_Days) 
             const options = {path: "/", expires: date}
-            cookieService.set("jwt", action?.payload?.jwt, options)
+            cookieService.set("jwt", action?.payload?.results.token, options)
             
             toast({
                 title: 'Logged in Successfully',
                 description: "You will navigate to the Home page after 2 seconds to login.",
                 status: 'success',
-                duration: 9000,
+                duration: 3000,
                 isClosable: true,
             })
 
@@ -84,15 +90,19 @@ const loginSlice = createSlice({
 
         // ** rejected
         builder.addCase(userLogin.rejected, (state, action) => {
-            state.loading = false;
+            state.isLoading = false;
+            state.isError = true;
             state.data = null
             state.error = action.payload;
 
+            console.log(action.payload);
+            
+
             toast({
-                title: action?.payload?.response.data.error.message || "Unknown error",
+                title: action?.payload?.response.data.error || "Unknown error",
                 description: "try again.",
                 status: 'error',
-                duration: 9000,
+                duration: 3000,
                 isClosable: true,
             })
         })

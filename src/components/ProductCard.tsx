@@ -14,7 +14,8 @@ const ProductCard = ( {product} : IProps) => {
         <Card maxW='sm' variant={"filled"}>
             <CardBody>
                 <Image
-                    src={`${serverUrl}${product.thumbnail.url}`}
+                    // src={`${serverUrl}${product.thumbnail.url}`}
+                    src="../../public/thumbnail_images_360fdccef6.jpg"
                     alt={product.title}
                     borderRadius='lg'
                     width={"full"}

@@ -37,24 +37,23 @@ import { selectNetwork } from '../../app/features/networkSlice'
 import { useSelector } from 'react-redux'
 
 
-const defaultProduct = {
-    id: 0,
-    documentId: "",
-    title: "",
+const defaultProduct: IProduct = {
+    id: "",
+    name: "",
     description: "",
     price: 0,
-    stock: 0,
-    category: {
-        title: "",
-    },
-    thumbnail: {
+    avaliableItems: 0,
+    category: "",
+    images: {
         url: "",
     },
+    defaultImage:{
+        url: "",
+    }
 }
 
 const DashboardProducts = () => {
     /* ___________________ State ___________________ */
-    const serverUrl = import.meta.env.VITE_SERVER_URL
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen:isOpenModal , onOpen:onOpenModal, onClose:onCloseModal } = useDisclosure()
     const { isOpen:isOpenModalAdd , onOpen:onOpenModalAdd, onClose:onCloseModalAdd } = useDisclosure()
@@ -64,8 +63,10 @@ const DashboardProducts = () => {
     const [ dispatchAddProduct, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddProductSliceMutation()
     const [productClickedId, setProductClickedId] = useState<string>("")
     const [productClickedEdit, setProductClickedEdit] = useState<IProduct>(defaultProduct)
-    const [thumbnail, setThumbnail] = useState<File>()
+    const [subImagesProduct, setSubImagesProduct] = useState<File>()
+    const [defaultImageProduct, setDefaultImageProduct] = useState<File>()
     const { isOnline } = useSelector(selectNetwork)
+    
 
 
     useEffect( () => {
@@ -95,13 +96,18 @@ const DashboardProducts = () => {
     }
 
     const onChangeHandlerStock = (_valueAsString: string, valueAsNumber: number): void => {
-        setProductClickedEdit({...productClickedEdit, stock: valueAsNumber})
+        setProductClickedEdit({...productClickedEdit, avaliableItems: valueAsNumber})
     }
 
     
-    const thumbnailHandler: React.ChangeEventHandler<HTMLInputElement>= (e) => {
+    const subImagesHandler: React.ChangeEventHandler<HTMLInputElement>= (e) => {
         const value = e.target.files?.[0];
-        setThumbnail(value)
+        setSubImagesProduct(value)
+    }
+
+    const defaultImageHandler: React.ChangeEventHandler<HTMLInputElement>= (e) => {
+        const value = e.target.files?.[0];
+        setDefaultImageProduct(value)
     }
 
     const handleUpdate = async (id: string, dataForm: FormData) => {
@@ -112,60 +118,38 @@ const DashboardProducts = () => {
     };
     
     const submitUpdateHandler = () => {
-        const dataForm = new FormData()
-        dataForm.append(
-            "data",
-            JSON.stringify({
-                title: productClickedEdit.title,
-                description: productClickedEdit.description,
-                price: productClickedEdit.price,
-                stock: productClickedEdit.stock,
-            })
-        );
-
-        if (thumbnail) {
-            dataForm.append("files.thumbnail", thumbnail);
+        const formData = new FormData()
+        formData.append("name", productClickedEdit.name)
+        formData.append("description", productClickedEdit.description)
+        formData.append("avaliableItems", String(productClickedEdit.avaliableItems))
+        formData.append("price", String(productClickedEdit.price))
+        formData.append("category", "6754ccad7905fad51ff16441")
+        if (subImagesProduct){
+            formData.append("subImages", subImagesProduct);
+        }
+        if(defaultImageProduct){
+            formData.append("defaultImage", defaultImageProduct);
         }
 
-        handleUpdate(productClickedEdit.documentId, dataForm)
+        handleUpdate(productClickedEdit.id, formData)
     }
-
-
-
-    // const handleAdd = async (dataForm) => {
-    //     await dispatchAddProduct(dataForm);
-    // };
     
     const submitAddHandler = () => {
-        // const dataForm = {
-        //     data: {
-        //         title: productClickedEdit.title,
-        //         description: productClickedEdit.description,
-        //         price: productClickedEdit.price,
-        //         stock: productClickedEdit.stock,
-        //     }
-        // }
-
-        const dataForm = new FormData()
-        dataForm.append(
-            "data",
-            JSON.stringify({
-                title: productClickedEdit.title,
-                description: productClickedEdit.description,
-                price: productClickedEdit.price,
-                stock: productClickedEdit.stock,
-            })
-        );
-
-        // if (thumbnail) {
-        //     dataForm.append("files.thumbnail", thumbnail);
-        // }
+        const formData = new FormData()
+        formData.append("name", productClickedEdit.name)
+        formData.append("description", productClickedEdit.description)
+        formData.append("avaliableItems", String(productClickedEdit.avaliableItems))
+        formData.append("price", String(productClickedEdit.price))
+        formData.append("category", "6754ccad7905fad51ff16441")
+        if (defaultImageProduct && subImagesProduct) {
+            formData.append("subImages", subImagesProduct);
+            formData.append("defaultImage", defaultImageProduct);
+        }
         
-        dispatchAddProduct(dataForm)
+        dispatchAddProduct(formData)
         .unwrap()
         .then(() => console.log("Product added successfully"))
         .catch((error) => console.error("Error:", error));
-        // handleAdd(dataForm)
     }
 
 
@@ -201,11 +185,11 @@ const DashboardProducts = () => {
                     </Thead>
                     <Tbody>
                         {
-                            data.data.map( (product: IProduct) => (
+                            data.products.map( (product: IProduct, idx: number) => (
                                 <Tr key={product.id} >
-                                    <Td textAlign={"center"}>{product.id}</Td>
-                                    <Td textAlign={"center"}>{product.title}</Td>
-                                    <Td textAlign={"center"}>{product.category.title}</Td>
+                                    <Td textAlign={"center"}>{idx+1}</Td>
+                                    <Td textAlign={"center"}>{product.name}</Td>
+                                    {/* <Td textAlign={"center"}>{product.category.title}</Td> */}
                                     <Td display='flex'
                                         alignItems='center'
                                         justifyContent='center'
@@ -214,12 +198,12 @@ const DashboardProducts = () => {
                                             borderRadius={"full"}
                                             objectFit={"cover"}
                                             boxSize={"40px"}
-                                            alt={product.title}
-                                            src={`${serverUrl}${product.thumbnail.url}`}
+                                            alt={product.name}
+                                            src={product.defaultImage.url}
                                         />
                                     </Td>
                                     <Td textAlign={"center"}>{product.price}</Td>
-                                    <Td textAlign={"center"}>{product.stock}</Td>
+                                    <Td textAlign={"center"}>{product.avaliableItems}</Td>
                                     <Td textAlign={"center"} gap={5}>
                                         <ButtonGroup>
                                             <Button colorScheme='purple'>
@@ -228,7 +212,7 @@ const DashboardProducts = () => {
                                             <Button 
                                                 colorScheme='red' 
                                                 onClick={() => {
-                                                    setProductClickedId(product.documentId)
+                                                    setProductClickedId(product.id)
                                                     onOpen()
                                                 }}>
                                                 <RiDeleteBin6Line /> 
@@ -283,10 +267,10 @@ const DashboardProducts = () => {
             >
                 <ModalBody as={"form"} pb={6}>
                     <FormControl>
-                        <FormLabel>Title</FormLabel>
+                        <FormLabel>Name</FormLabel>
                         <Input  
-                            name='title' 
-                            value={productClickedEdit.title} 
+                            name='name' 
+                            value={productClickedEdit.name} 
                             onChange={onChangeHandler}  
                         />
                     </FormControl>
@@ -314,7 +298,7 @@ const DashboardProducts = () => {
 
                     <FormControl mt={4}>
                         <FormLabel>Stock</FormLabel>
-                        <NumberInput name='stock' defaultValue={productClickedEdit.stock} onChange={onChangeHandlerStock}>
+                        <NumberInput name='avaliableItems' defaultValue={productClickedEdit.avaliableItems} onChange={onChangeHandlerStock}>
                             <NumberInputField />
                             <NumberInputStepper>
                                 <NumberIncrementStepper />
@@ -324,14 +308,24 @@ const DashboardProducts = () => {
                     </FormControl>
 
                     <FormControl>
-                        <FormLabel>Thumbnail</FormLabel>
+                        <FormLabel>default Image</FormLabel>
                         <Input 
-                            name='thumbnail'    
-                            // value={productClickedEdit.title} 
+                            name='defaultImage'    
                             type='file' 
                             p={2} 
-                            accept='image/png, image/gif, image/jpeg'  
-                            onChange={thumbnailHandler}
+                            accept='image/png, image/gif, image/jpeg, image/jpg'  
+                            onChange={defaultImageHandler}
+                        />
+                    </FormControl>
+
+                    <FormControl>
+                        <FormLabel>Sub Image</FormLabel>
+                        <Input 
+                            name='subImagesImage'    
+                            type='file' 
+                            p={2} 
+                            accept='image/png, image/gif, image/jpeg, image/jpg'  
+                            onChange={subImagesHandler}
                         />
                     </FormControl>
                 </ModalBody>
@@ -349,10 +343,10 @@ const DashboardProducts = () => {
             >
                 <ModalBody as={"form"} pb={6}>
                     <FormControl>
-                        <FormLabel>Title</FormLabel>
+                        <FormLabel>Name</FormLabel>
                         <Input  
-                            name='title' 
-                            value={productClickedEdit.title} 
+                            name='name' 
+                            value={productClickedEdit.name} 
                             onChange={onChangeHandler}  
                         />
                     </FormControl>
@@ -379,8 +373,8 @@ const DashboardProducts = () => {
                     </FormControl>
 
                     <FormControl mt={4}>
-                        <FormLabel>Stock</FormLabel>
-                        <NumberInput name='stock' defaultValue={productClickedEdit.stock} onChange={onChangeHandlerStock}>
+                        <FormLabel>Avaliable Items</FormLabel>
+                        <NumberInput name='avaliableItems' defaultValue={productClickedEdit.avaliableItems} onChange={onChangeHandlerStock}>
                             <NumberInputField />
                             <NumberInputStepper>
                                 <NumberIncrementStepper />
@@ -390,14 +384,24 @@ const DashboardProducts = () => {
                     </FormControl>
 
                     <FormControl>
-                        <FormLabel>Thumbnail</FormLabel>
+                        <FormLabel>default Image</FormLabel>
                         <Input 
-                            name='thumbnail'    
-                            // value={productClickedEdit.title} 
+                            name='defaultImage'    
                             type='file' 
                             p={2} 
-                            accept='image/png, image/gif, image/jpeg'  
-                            onChange={thumbnailHandler}
+                            accept='image/png, image/gif, image/jpeg, image/jpg'  
+                            onChange={defaultImageHandler}
+                        />
+                    </FormControl>
+
+                    <FormControl>
+                        <FormLabel>Sub Image</FormLabel>
+                        <Input 
+                            name='subImagesImage'    
+                            type='file' 
+                            p={2} 
+                            accept='image/png, image/gif, image/jpeg, image/jpg'  
+                            onChange={subImagesHandler}
                         />
                     </FormControl>
                 </ModalBody>

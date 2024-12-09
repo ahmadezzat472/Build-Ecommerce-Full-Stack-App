@@ -3,12 +3,13 @@ import RootLayout from "../layout/RootLayout";
 import HomePage from "../pages";
 import LoginPage from "../pages/Login";
 import ProductDetailsPage from "../pages/ProductDetails";
-import ProductsPage from "../pages/Products";
 import { Route, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
 import cookieService from "../services/CookieService";
 import DashboardLayout from "../layout/DashboardLayout";
 import DashboardProducts from "../pages/dashboard/Products";
 import Dashboard from "../pages/dashboard";
+import About from "../pages/About";
+import CategoryLists from "../components/CategoryLists";
 
 /* _________________ Cookies _________________ */
 const token = cookieService.get("jwt");
@@ -19,7 +20,8 @@ const router = createBrowserRouter(
             {/* Root Layout */}
             <Route path="/" element={<RootLayout />} >
                 <Route index element={<HomePage />} />
-                <Route path="products" element={<ProductsPage />} />
+                <Route path="about" element={<About />} />
+                <Route path="products" element={<CategoryLists />} />
                 <Route path="products/:productId" element={<ProductDetailsPage />} />
             </Route>
 

@@ -13,39 +13,37 @@ import {
     InputGroup,
     InputRightElement,
     FormErrorMessage,
+    Alert,
+    AlertIcon,
 } from '@chakra-ui/react'
 import { ChangeEventHandler, FormEventHandler, useState } from 'react'
 import { BiSolidShow } from "react-icons/bi";
 import { IoMdEyeOff } from "react-icons/io";
-import { userLogin } from '../app/features/loginSlice';
+import { IError, userLogin } from '../app/features/loginSlice';
 import { RootState, useAppDispatch } from '../app/store';
 import { useSelector } from 'react-redux';
-
-interface IUser {
-    identifier: string;
-    password: string;
-}
+import { IUser } from '../interfaces';
 
 export default function LoginPage() {
     const dispatch = useAppDispatch()
-    const {data, error, loading} =  useSelector( (state: RootState) => state.Login )
+    const {isError, error, isLoading} =  useSelector( (state: RootState) => state.Login )
     const [isEmail, setIsEmail] = useState<boolean>(false)
     const [isPassword, setIsPassword] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [user, setUser] = useState<IUser>({
-        identifier: "",
+        email: "",
         password: ""
     })
 
     const Submithandler: FormEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault()
 
-        if(!user.identifier && !user.password){
+        if(!user.email && !user.password){
             setIsEmail(true)
             setIsPassword(true)
             return
         }
-        if(!user.identifier){
+        if(!user.email){
             setIsEmail(true)
             return
         }
@@ -84,13 +82,19 @@ export default function LoginPage() {
                     onSubmit={Submithandler}
                 >
                     <Stack spacing={4}>
+                        {isError && (
+                            <Alert status="error">
+                                <AlertIcon />
+                                {(error as IError).response.data.error || "An error occurred while logging in."}
+                            </Alert>
+                        )}
                         <FormControl id="email" isInvalid={isEmail}>
                             <FormLabel>Email address</FormLabel>
                             <Input 
                                 type="email" 
-                                value={user.identifier}
+                                value={user.email}
                                 onChange={onChangehandler}
-                                name='identifier'
+                                name='email'
                             />
                             {isEmail ? (
                                 <FormErrorMessage>Email is required.</FormErrorMessage>
@@ -137,7 +141,7 @@ export default function LoginPage() {
                                 _hover={
                                     isEmail || isPassword ? {bg: 'red.500'} : {bg: 'blue.500'}
                                 }
-                                isLoading={loading}
+                                isLoading={isLoading}
                             >
                                 Sign in
                             </Button>

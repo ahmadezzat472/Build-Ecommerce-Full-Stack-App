@@ -8,12 +8,13 @@ const jwt = CookieService.get("jwt")
 export const productApiSlice = createApi({
     reducerPath: 'productApiSlice',
     tagTypes: ["Product"],
-    baseQuery: fetchBaseQuery({ baseUrl: serverUrl }),
+    baseQuery: fetchBaseQuery({ baseUrl: serverUrl}),
+
     endpoints: (builder) => ({
         getProductSlice: builder.query({
             query: () => {
                 return {
-                    url: "/api/products?populate=*",
+                    url: "product",
                 }
             },
             providesTags: ["Product"],
@@ -24,13 +25,24 @@ export const productApiSlice = createApi({
             //         : ['Product'],
         }),
 
+        // getProductsByCategory: builder.query({
+        //     query: (categoryId) => {
+        //         return {
+        //             url: categoryId ?  
+        //             `/api/products?filters[category]=${categoryId}&populate=*` :
+        //             `/api/products?populate=*`, // Fetch all products if no categoryId
+        //         };
+        //     },
+        //     providesTags: ['Product'],
+        // }),
+
         deleteProductSlice: builder.mutation({
             query: (id) => {
                 return {
-                    url: `/api/products/${id}`,
+                    url: `product/${id}`,
                     method: "Delete",
                     headers: {
-                        Authorization: `Bearer ${jwt}`
+                        token: jwt
                     }
                 }
             },
@@ -39,10 +51,10 @@ export const productApiSlice = createApi({
 
         updateProductSlice: builder.mutation({
             query: ({ id, productData }) => ({
-                url: `/api/products/${id}`,
-                method: "PUT", 
+                url: `product/${id}`,
+                method: "PATCH", 
                 headers: {
-                    Authorization: `Bearer ${jwt}`,
+                    token: jwt,
                 },
                 body: productData, // Updated product data
             }),
@@ -52,10 +64,10 @@ export const productApiSlice = createApi({
         addProductSlice: builder.mutation({
             query: (productData) => {
                 return {
-                    url: `/api/products`,
+                    url: `product`,
                     method: "POST", 
                     headers: {
-                        Authorization: `Bearer ${jwt}`,
+                        token: jwt,
                     },
                     body: productData, // Updated product data
                 };
@@ -65,4 +77,4 @@ export const productApiSlice = createApi({
     }),
 })
 
-export const { useGetProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation, useAddProductSliceMutation } = productApiSlice;
+export const { useGetProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation, useAddProductSliceMutation, useLazyGetProductsByCategoryQuery } = productApiSlice;

@@ -35,6 +35,7 @@ const CustomModal = ({
     onOkClick,
     isLoading,
 } : IProps) => {
+    
     const initialRef = React.useRef(null)
     const finalRef = React.useRef(null)
 
