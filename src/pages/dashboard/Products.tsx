@@ -1,4 +1,4 @@
-import { useAddProductSliceMutation, useDeleteProductSliceMutation, useGetProductSliceQuery, useUpdateProductSliceMutation } from '../../app/services/productsSlice'
+import { useAddProductSliceMutation, useDeleteProductSliceMutation, useGetFilterProductSliceQuery, useUpdateProductSliceMutation } from '../../app/services/productsSlice'
 import {
     Table,
     Thead,
@@ -35,6 +35,7 @@ import CustomModal from '../../components/Modal'
 import React from 'react'
 import { selectNetwork } from '../../app/features/networkSlice'
 import { useSelector } from 'react-redux'
+import Paginator from '../../components/Paginator'
 
 
 const defaultProduct: IProduct = {
@@ -55,36 +56,49 @@ const defaultProduct: IProduct = {
 const DashboardProducts = () => {
     /* ___________________ State ___________________ */
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const { isOpen:isOpenModal , onOpen:onOpenModal, onClose:onCloseModal } = useDisclosure()
+    const { isOpen:isOpenModalUpdate , onOpen:onOpenModalUpdate, onClose:onCloseModalUpdate } = useDisclosure()
     const { isOpen:isOpenModalAdd , onOpen:onOpenModalAdd, onClose:onCloseModalAdd } = useDisclosure()
-    const {isLoading, data, isError} = useGetProductSliceQuery({})
-    const [ dispatchDeleteProduct, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteProductSliceMutation()
-    const [ dispatchUpdateProduct, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateProductSliceMutation()
-    const [ dispatchAddProduct, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddProductSliceMutation()
+
+    const [page, setPage] = useState(1)
     const [productClickedId, setProductClickedId] = useState<string>("")
     const [productClickedEdit, setProductClickedEdit] = useState<IProduct>(defaultProduct)
     const [subImagesProduct, setSubImagesProduct] = useState<File>()
     const [defaultImageProduct, setDefaultImageProduct] = useState<File>()
+
+    const {isLoading, data, isError} = useGetFilterProductSliceQuery(page)
+    const [ dispatchDeleteProduct, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteProductSliceMutation()
+    const [ dispatchUpdateProduct, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateProductSliceMutation()
+    const [ dispatchAddProduct, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddProductSliceMutation()
     const { isOnline } = useSelector(selectNetwork)
     
+    
+
+    const nextPageHandler = () => {
+        setPage( prev => prev + 1 )
+    }
+
+    const prePageHandler = () => {
+        setPage( prev => prev - 1 )
+    }
 
 
     useEffect( () => {
-        if(isSuccessDelete){
-            setProductClickedId("")
-            onClose()
-        }
-
-        if(isSuccessUpdate){
-            setProductClickedEdit(defaultProduct)
-            onCloseModal()
-        }
-
         if(isSuccessAdd){
             setProductClickedEdit(defaultProduct)
             onCloseModalAdd()
         }
-    }, [isSuccessDelete, isSuccessUpdate])
+
+        if(isSuccessDelete){
+            setProductClickedId("")
+            onClose()
+        }
+        
+        if(isSuccessUpdate){
+            setProductClickedEdit(defaultProduct)
+            onCloseModalUpdate()
+        }
+
+    }, [isSuccessDelete, isSuccessUpdate, isSuccessAdd])
 
     const onChangeHandler: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
         const {name, value} = event.target
@@ -169,6 +183,7 @@ const DashboardProducts = () => {
             >
                 ADD
             </Button>
+
             <TableContainer>
                 <Table variant='simple'>
                     <TableCaption>Imperial to metric conversion factors</TableCaption>
@@ -184,54 +199,53 @@ const DashboardProducts = () => {
                         </Tr>
                     </Thead>
                     <Tbody>
-                        {
-                            data.products.map( (product: IProduct, idx: number) => (
-                                <Tr key={product.id} >
-                                    <Td textAlign={"center"}>{idx+1}</Td>
-                                    <Td textAlign={"center"}>{product.name}</Td>
-                                    {/* <Td textAlign={"center"}>{product.category.title}</Td> */}
-                                    <Td display='flex'
-                                        alignItems='center'
-                                        justifyContent='center'
-                                    >
-                                        <Image 
-                                            borderRadius={"full"}
-                                            objectFit={"cover"}
-                                            boxSize={"40px"}
-                                            alt={product.name}
-                                            src={product.defaultImage.url}
-                                        />
-                                    </Td>
-                                    <Td textAlign={"center"}>{product.price}</Td>
-                                    <Td textAlign={"center"}>{product.avaliableItems}</Td>
-                                    <Td textAlign={"center"} gap={5}>
-                                        <ButtonGroup>
-                                            <Button colorScheme='purple'>
-                                                <IoEyeOutline />
-                                            </Button>
-                                            <Button 
-                                                colorScheme='red' 
-                                                onClick={() => {
-                                                    setProductClickedId(product.id)
-                                                    onOpen()
-                                                }}>
-                                                <RiDeleteBin6Line /> 
-                                            </Button>
-                                            <Button 
-                                                colorScheme='orange'
-                                                onClick={() => {
-                                                    setProductClickedEdit(product)
-                                                    onOpenModal()
-                                                }}
-                                            >
-                                                <FaPen />
-                                            </Button>
-                                        </ButtonGroup>
-                                    </Td>
-                                </Tr>
-                            ))
-                        }
-                        
+                    {
+                        data.data.map( (product: IProduct, idx: number) => (
+                            <Tr key={product.id} >
+                                <Td textAlign={"center"}>{idx+1}</Td>
+                                <Td textAlign={"center"}>{product.name}</Td>
+                                {/* <Td textAlign={"center"}>{product.category.title}</Td> */}
+                                <Td display='flex'
+                                    alignItems='center'
+                                    justifyContent='center'
+                                >
+                                    <Image 
+                                        borderRadius={"full"}
+                                        objectFit={"cover"}
+                                        boxSize={"40px"}
+                                        alt={product.name}
+                                        src={product.defaultImage.url}
+                                    />
+                                </Td>
+                                <Td textAlign={"center"}>{product.price}</Td>
+                                <Td textAlign={"center"}>{product.avaliableItems}</Td>
+                                <Td textAlign={"center"} gap={5}>
+                                    <ButtonGroup>
+                                        <Button colorScheme='purple'>
+                                            <IoEyeOutline />
+                                        </Button>
+                                        <Button 
+                                            colorScheme='red' 
+                                            onClick={() => {
+                                                setProductClickedId(product.id)
+                                                onOpen()
+                                            }}>
+                                            <RiDeleteBin6Line /> 
+                                        </Button>
+                                        <Button 
+                                            colorScheme='orange'
+                                            onClick={() => {
+                                                setProductClickedEdit(product)
+                                                onOpenModalUpdate()
+                                            }}
+                                        >
+                                            <FaPen />
+                                        </Button>
+                                    </ButtonGroup>
+                                </Td>
+                            </Tr>
+                        ))
+                    }
                     </Tbody>
                     <Tfoot>
                         <Tr>
@@ -243,6 +257,16 @@ const DashboardProducts = () => {
                 </Table>
             </TableContainer>
 
+            <Paginator
+                isLoading={isLoading}
+                onClickNext={nextPageHandler}
+                onClickPrev={prePageHandler}
+                currentPage={page}
+                totalPages={data.meta.pagination.totalPages}
+                pageSize={data.meta.pagination.pageSize}
+            />
+
+            {/* Delete Product */}
             <CustomAlertDialog 
                 isOpen={isOpen} 
                 onOpen={onOpen} 
@@ -255,10 +279,11 @@ const DashboardProducts = () => {
                 isLoading= {isLoadingDelete}
             />
 
+            {/* Update Product */}
             <CustomModal 
-                isOpen={isOpenModal} 
-                onOpen={onOpenModal} 
-                onClose={onCloseModal} 
+                isOpen={isOpenModalUpdate} 
+                onOpen={onOpenModalUpdate} 
+                onClose={onCloseModalUpdate} 
                 title={"Update Product"} 
                 okTxt='Updated'
                 colorScheme="blue"
@@ -331,6 +356,7 @@ const DashboardProducts = () => {
                 </ModalBody>
             </CustomModal>
 
+            {/* Add Product */}
             <CustomModal 
                 isOpen={isOpenModalAdd} 
                 onOpen={onOpenModalAdd} 

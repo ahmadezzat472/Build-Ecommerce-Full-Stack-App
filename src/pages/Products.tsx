@@ -3,7 +3,7 @@ import ProductCard from "../components/ProductCard";
 import { Grid } from "@chakra-ui/react";
 import { IProduct } from "../interfaces";
 import ProductCardSkelton from "../components/ProductCardSkelton";
-import { useGetProductSliceQuery, useLazyGetProductsByCategoryQuery } from "../app/services/productsSlice";
+// import { useGetProductSliceQuery, useLazyGetProductsByCategoryQuery } from "../app/services/productsSlice";
 import { useEffect } from "react";
 
 interface IProps {
@@ -12,7 +12,7 @@ interface IProps {
 
 const ProductsPage = ({categoryId} : IProps) => {
     // const { data, isLoading, isError, error } = useGetProductSliceQuery({});
-    const [fetchProducts, { data, isLoading, isError}] = useLazyGetProductsByCategoryQuery();
+    // const [fetchProducts, { data, isLoading, isError}] = useLazyGetProductsByCategoryQuery();
 
     useEffect( () => {
         fetchProducts(0)

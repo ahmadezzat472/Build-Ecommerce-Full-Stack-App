@@ -4,14 +4,13 @@ import CookieService from '../../services/CookieService'
 const serverUrl = import.meta.env.VITE_SERVER_URL
 const jwt = CookieService.get("jwt")
 
-
 export const productApiSlice = createApi({
     reducerPath: 'productApiSlice',
     tagTypes: ["Product"],
     baseQuery: fetchBaseQuery({ baseUrl: serverUrl}),
 
     endpoints: (builder) => ({
-        getProductSlice: builder.query({
+        getAllProductSlice: builder.query({
             query: () => {
                 return {
                     url: "product",
@@ -23,6 +22,15 @@ export const productApiSlice = createApi({
             //     result
             //         ? [...result.data.map(({ id } : {id: number} ) => ({ type: 'Product' as const, id })), 'Product']
             //         : ['Product'],
+        }),
+
+        getFilterProductSlice: builder.query({
+            query: (page) => {
+                return {
+                    url: `product/filter?page=${page}`,
+                }
+            },
+            providesTags: ["Product"],
         }),
 
         // getProductsByCategory: builder.query({
@@ -77,4 +85,4 @@ export const productApiSlice = createApi({
     }),
 })
 
-export const { useGetProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation, useAddProductSliceMutation, useLazyGetProductsByCategoryQuery } = productApiSlice;
+export const { useGetAllProductSliceQuery, useGetFilterProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation, useAddProductSliceMutation } = productApiSlice;
