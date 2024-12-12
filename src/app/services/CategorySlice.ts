@@ -19,13 +19,7 @@ export const categoryApiSlice = createApi({
             providesTags: ["Category"],
         }),
 
-        // getCategorySlice: builder.query({
-        //     query: (id) => {
-        //         return {
-        //             url: `/api/categories/${id}?populate=products`,
-        //         }
-        //     },
-        // })
+       
     }),
 })
 

@@ -23,8 +23,9 @@ import {
     NumberInputField,
     NumberIncrementStepper,
     NumberDecrementStepper,
+    Select,
 } from '@chakra-ui/react'
-import { IProduct } from '../../interfaces'
+import { ICategory, IProduct } from '../../interfaces'
 import ProductTableSkelton from '../../components/ProductTableSkelton'
 import CustomAlertDialog from '../../components/AlertDialog'
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -36,6 +37,8 @@ import React from 'react'
 import { selectNetwork } from '../../app/features/networkSlice'
 import { useSelector } from 'react-redux'
 import Paginator from '../../components/Paginator'
+import { useGetCategoriesSliceQuery } from '../../app/services/CategorySlice'
+import CategorySelectSkelton from '../../components/CategorySelectSkelton'
 
 
 const defaultProduct: IProduct = {
@@ -44,7 +47,13 @@ const defaultProduct: IProduct = {
     description: "",
     price: 0,
     avaliableItems: 0,
-    category: "",
+    category: {
+        id: "",
+        name: "",
+        image: {
+            url: "",
+        },
+    },
     images: {
         url: "",
     },
@@ -66,6 +75,7 @@ const DashboardProducts = () => {
     const [defaultImageProduct, setDefaultImageProduct] = useState<File>()
 
     const {isLoading, data, isError} = useGetFilterProductSliceQuery(page)
+    const {isLoading: isLoadingCategories, data: dataCategories, isError: isErrorCategories} = useGetCategoriesSliceQuery({})
     const [ dispatchDeleteProduct, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteProductSliceMutation()
     const [ dispatchUpdateProduct, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateProductSliceMutation()
     const [ dispatchAddProduct, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddProductSliceMutation()
@@ -113,6 +123,13 @@ const DashboardProducts = () => {
         setProductClickedEdit({...productClickedEdit, avaliableItems: valueAsNumber})
     }
 
+    const onChangeHandlerCategory:React.ChangeEventHandler<HTMLSelectElement> = (e) => {
+        const { value } = e.target
+        setProductClickedEdit({
+            ...productClickedEdit,
+            category: { ...productClickedEdit.category, id: value },
+        })
+    }
     
     const subImagesHandler: React.ChangeEventHandler<HTMLInputElement>= (e) => {
         const value = e.target.files?.[0];
@@ -137,7 +154,7 @@ const DashboardProducts = () => {
         formData.append("description", productClickedEdit.description)
         formData.append("avaliableItems", String(productClickedEdit.avaliableItems))
         formData.append("price", String(productClickedEdit.price))
-        formData.append("category", "6754ccad7905fad51ff16441")
+        formData.append("category", productClickedEdit.category.id)
         if (subImagesProduct){
             formData.append("subImages", subImagesProduct);
         }
@@ -154,7 +171,7 @@ const DashboardProducts = () => {
         formData.append("description", productClickedEdit.description)
         formData.append("avaliableItems", String(productClickedEdit.avaliableItems))
         formData.append("price", String(productClickedEdit.price))
-        formData.append("category", "6754ccad7905fad51ff16441")
+        formData.append("category", productClickedEdit.category.id)
         if (defaultImageProduct && subImagesProduct) {
             formData.append("subImages", subImagesProduct);
             formData.append("defaultImage", defaultImageProduct);
@@ -175,6 +192,8 @@ const DashboardProducts = () => {
     if (isError) {
         // return <p>{error.data?.error?.message}</p>;
     }
+
+    if(!data) return <>no data</>
 
     return (
         <>
@@ -332,7 +351,26 @@ const DashboardProducts = () => {
                         </NumberInput>
                     </FormControl>
 
-                    <FormControl>
+                    <FormControl mt={4}>
+                        <FormLabel>Categories</FormLabel>
+                            {
+                                isLoadingCategories ? (
+                                    <CategorySelectSkelton />
+                                ) : (
+                                    <Select placeholder={productClickedEdit.category.name} onChange={onChangeHandlerCategory}>
+                                        {
+                                            dataCategories.categories.map( (cat:ICategory) => 
+                                                <option key={cat.id} value={cat.id} >
+                                                    {cat.name}
+                                                </option> 
+                                            )
+                                        }
+                                    </Select>
+                                )
+                            }
+                    </FormControl>
+
+                    <FormControl mt={4}>
                         <FormLabel>default Image</FormLabel>
                         <Input 
                             name='defaultImage'    
@@ -343,7 +381,7 @@ const DashboardProducts = () => {
                         />
                     </FormControl>
 
-                    <FormControl>
+                    <FormControl mt={4}>
                         <FormLabel>Sub Image</FormLabel>
                         <Input 
                             name='subImagesImage'    
@@ -409,7 +447,26 @@ const DashboardProducts = () => {
                         </NumberInput>
                     </FormControl>
 
-                    <FormControl>
+                    <FormControl mt={4}>
+                        <FormLabel>Categories</FormLabel>
+                            {
+                                isLoadingCategories ? (
+                                    <CategorySelectSkelton />
+                                ) : (
+                                    <Select placeholder='Select country' onChange={onChangeHandlerCategory}>
+                                        {
+                                            dataCategories.categories.map( (cat:ICategory) => 
+                                                <option key={cat.id} value={cat.id} >
+                                                    {cat.name}
+                                                </option> 
+                                            )
+                                        }
+                                    </Select>
+                                )
+                            }
+                    </FormControl>
+
+                    <FormControl mt={4}>
                         <FormLabel>default Image</FormLabel>
                         <Input 
                             name='defaultImage'    
@@ -420,7 +477,7 @@ const DashboardProducts = () => {
                         />
                     </FormControl>
 
-                    <FormControl>
+                    <FormControl mt={4}>
                         <FormLabel>Sub Image</FormLabel>
                         <Input 
                             name='subImagesImage'    
