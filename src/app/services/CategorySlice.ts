@@ -11,22 +11,22 @@ export const categoryApiSlice = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: serverUrl }),
     endpoints: (builder) => ({
         getCategoriesSlice: builder.query({
-            query: (page) => {
+            query: () => {
                 return {
-                    url: `/api/categories?pagination[pageSize]=6&pagination[page]=${page}`,
+                    url: `category`,
                 }
             },
             providesTags: ["Category"],
         }),
 
-        getCategorySlice: builder.query({
-            query: (id) => {
-                return {
-                    url: `/api/categories/${id}?populate=products`,
-                }
-            },
-        })
+        // getCategorySlice: builder.query({
+        //     query: (id) => {
+        //         return {
+        //             url: `/api/categories/${id}?populate=products`,
+        //         }
+        //     },
+        // })
     }),
 })
 
-export const { useGetCategoriesSliceQuery, useGetCategorySliceQuery } = categoryApiSlice;
+export const { useGetCategoriesSliceQuery } = categoryApiSlice;

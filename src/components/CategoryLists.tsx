@@ -1,40 +1,60 @@
 import { useState } from 'react'
-import PaginatedTabs from './PaginatedTabs'
 import { useGetCategoriesSliceQuery } from '../app/services/CategorySlice';
 import ProductsPage from '../pages/Products';
+import Paginator from './Paginator';
+import { useGetFilterProductByCategorySliceQuery } from '../app/services/productsSlice';
+import CategoryListSkelton from './CategoryListSkelton';
 
 const CategoryLists = () => {
-    const [page, setPage] = useState<number>(1)
-    const [categoryClickedId, setCategoryClickedId] = useState<number>(0)
-    const { data, isLoading, isError, error } = useGetCategoriesSliceQuery(page);
+    const [page, setPage] = useState<number>(1);
+    const [pageSize] = useState<number>(5); 
+    const [categoryClickedId, setCategoryClickedId] = useState<string>('')
 
-    console.log(categoryClickedId);
+    const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategoriesSliceQuery({});
+    const { data: productsData, isLoading: isLoadingProduct } = useGetFilterProductByCategorySliceQuery(categoryClickedId);
+
+    const products = productsData?.products || productsData?.data;
+
+    // Paginate categories
+    const totalCategories = categoriesData?.categories?.length || 0;
+    const totalPages = Math.ceil(totalCategories / pageSize);
+    const paginatedCategories = categoriesData?.categories?.slice(
+        (page - 1) * pageSize,
+        page * pageSize
+    );
     
+    console.log(categoryClickedId, categoriesData);
+    // console.log(totalCategories,totalPages, paginatedCategories , page);    
 
-    const preHandler = () => {
-        setPage( pre => pre - 1)
+    const prevHandler = () => {
+        setPage( prev => prev - 1)
     }
 
     const nextHandler = () => {
-        setPage( pre => pre + 1)
+        setPage( prev => prev + 1 )
     }
 
-    if(isLoading)
-        return <h1>loading ..</h1>
+    if(isLoadingCategories) {
+        return (
+            <CategoryListSkelton />
+        )
+    }
 
     return (
         <div>
-            <PaginatedTabs 
+            <Paginator
+                data={paginatedCategories} 
+                currentPage={page} 
+                totalPages={totalPages} 
+                pageSize={pageSize}
+                onClickNext={nextHandler} 
+                onClickPrev={prevHandler} 
+                isLoading={isLoadingCategories}
                 setCategoryClickedId={setCategoryClickedId} 
-                data={data.data} 
-                page={page} 
-                pageCount={data.meta.pagination.pageCount} 
-                preHandler={preHandler} 
-                nextHandler={nextHandler} 
             />
-            <ProductsPage categoryId={categoryClickedId} />
+            <ProductsPage products={products} isLoading={isLoadingProduct} />
         </div>
     )
 }
 
-export default CategoryLists
+export default CategoryLists;

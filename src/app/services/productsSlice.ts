@@ -33,16 +33,14 @@ export const productApiSlice = createApi({
             providesTags: ["Product"],
         }),
 
-        // getProductsByCategory: builder.query({
-        //     query: (categoryId) => {
-        //         return {
-        //             url: categoryId ?  
-        //             `/api/products?filters[category]=${categoryId}&populate=*` :
-        //             `/api/products?populate=*`, // Fetch all products if no categoryId
-        //         };
-        //     },
-        //     providesTags: ['Product'],
-        // }),
+        getFilterProductByCategorySlice: builder.query({
+            query: (catId) => {
+                return {
+                    url: catId ? `product/filter?category=${catId}` : "product"
+                };
+            },
+            providesTags: ["Product"],
+        }),
 
         deleteProductSlice: builder.mutation({
             query: (id) => {
@@ -85,4 +83,4 @@ export const productApiSlice = createApi({
     }),
 })
 
-export const { useGetAllProductSliceQuery, useGetFilterProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation, useAddProductSliceMutation } = productApiSlice;
+export const { useGetAllProductSliceQuery, useGetFilterProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation, useAddProductSliceMutation, useGetFilterProductByCategorySliceQuery } = productApiSlice;

@@ -204,7 +204,7 @@ const DashboardProducts = () => {
                             <Tr key={product.id} >
                                 <Td textAlign={"center"}>{idx+1}</Td>
                                 <Td textAlign={"center"}>{product.name}</Td>
-                                {/* <Td textAlign={"center"}>{product.category.title}</Td> */}
+                                <Td textAlign={"center"}>{product.category.name}</Td>
                                 <Td display='flex'
                                     alignItems='center'
                                     justifyContent='center'

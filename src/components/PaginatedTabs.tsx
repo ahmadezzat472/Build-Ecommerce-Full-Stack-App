@@ -1,4 +1,4 @@
-import { Tabs, TabList, TabPanels, Tab, TabPanel, Button, Flex } from '@chakra-ui/react';
+import { Tabs, TabList, Tab, Button, Flex } from '@chakra-ui/react';
 
 interface ICategory {
     id: number;
@@ -31,23 +31,15 @@ const PaginatedTabs = ({page, pageCount, preHandler, nextHandler, setCategoryCli
                     <Tab onClick={() => setCategoryClickedId(0)}>
                         All
                     </Tab>
-                {
-                    categories.map( (cat) => 
-                        <Tab 
-                            key={cat.id}
-                            onClick={() => setCategoryClickedId(cat.id)}
-                        >{cat.title}</Tab>
-                    )
-                }
+                    {
+                        categories.map( (cat) => 
+                            <Tab 
+                                key={cat.id}
+                                onClick={() => setCategoryClickedId(cat.id)}
+                            >{cat.title}</Tab>
+                        )
+                    }
                 </TabList>
-                <TabPanels>
-                    <TabPanel>
-                        <p>one!</p>
-                    </TabPanel>
-                    <TabPanel>
-                        <p>two!</p>
-                    </TabPanel>
-                </TabPanels>
             </Tabs>
 
             <Button

@@ -24,11 +24,19 @@ export interface IProduct {
     description: string;
     avaliableItems: number;
     price: number;
-    category: string;
+    category: ICategory;
     images: {
         url: string;
     };
     defaultImage:{
         url: string
+    }
+}
+
+export interface ICategory {
+    id: string;
+    name: string;
+    image: {
+        url: string;
     }
 }
