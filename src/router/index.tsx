@@ -10,6 +10,7 @@ import DashboardProducts from "../pages/dashboard/Products";
 import Dashboard from "../pages/dashboard";
 import About from "../pages/About";
 import CategoryLists from "../components/CategoryLists";
+import DashboardCategories from "../pages/dashboard/Categories";
 
 /* _________________ Cookies _________________ */
 const token = cookieService.get("jwt");
@@ -29,7 +30,7 @@ const router = createBrowserRouter(
             <Route path="/dashboard" element={<DashboardLayout />} >
                 <Route index element={<Dashboard />} />
                 <Route path="products" element={<DashboardProducts />} />
-                <Route path="categories" element={<h1>home</h1>} />
+                <Route path="categories" element={<DashboardCategories />} />
             </Route>
 
             <Route 

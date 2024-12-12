@@ -74,8 +74,8 @@ const DashboardProducts = () => {
     const [subImagesProduct, setSubImagesProduct] = useState<File>()
     const [defaultImageProduct, setDefaultImageProduct] = useState<File>()
 
-    const {isLoading, data, isError} = useGetFilterProductSliceQuery(page)
-    const {isLoading: isLoadingCategories, data: dataCategories, isError: isErrorCategories} = useGetCategoriesSliceQuery({})
+    const {isLoading, data} = useGetFilterProductSliceQuery(page)
+    const {isLoading: isLoadingCategories, data: dataCategories} = useGetCategoriesSliceQuery({})
     const [ dispatchDeleteProduct, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteProductSliceMutation()
     const [ dispatchUpdateProduct, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateProductSliceMutation()
     const [ dispatchAddProduct, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddProductSliceMutation()
@@ -183,14 +183,8 @@ const DashboardProducts = () => {
         .catch((error) => console.error("Error:", error));
     }
 
-
-
     if(isLoading || !isOnline) {
         return <ProductTableSkelton />
-    }
-
-    if (isError) {
-        // return <p>{error.data?.error?.message}</p>;
     }
 
     if(!data) return <>no data</>
@@ -375,7 +369,7 @@ const DashboardProducts = () => {
                         <Input 
                             name='defaultImage'    
                             type='file' 
-                            p={2} 
+                            p={1} 
                             accept='image/png, image/gif, image/jpeg, image/jpg'  
                             onChange={defaultImageHandler}
                         />
@@ -386,7 +380,7 @@ const DashboardProducts = () => {
                         <Input 
                             name='subImagesImage'    
                             type='file' 
-                            p={2} 
+                            p={1} 
                             accept='image/png, image/gif, image/jpeg, image/jpg'  
                             onChange={subImagesHandler}
                         />
@@ -471,7 +465,7 @@ const DashboardProducts = () => {
                         <Input 
                             name='defaultImage'    
                             type='file' 
-                            p={2} 
+                            p={1} 
                             accept='image/png, image/gif, image/jpeg, image/jpg'  
                             onChange={defaultImageHandler}
                         />
@@ -482,7 +476,7 @@ const DashboardProducts = () => {
                         <Input 
                             name='subImagesImage'    
                             type='file' 
-                            p={2} 
+                            p={1} 
                             accept='image/png, image/gif, image/jpeg, image/jpg'  
                             onChange={subImagesHandler}
                         />
