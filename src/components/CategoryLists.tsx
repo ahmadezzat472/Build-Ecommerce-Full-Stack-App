@@ -21,10 +21,7 @@ const CategoryLists = () => {
     const paginatedCategories = categoriesData?.categories?.slice(
         (page - 1) * pageSize,
         page * pageSize
-    );
-    
-    console.log(categoryClickedId, categoriesData);
-    // console.log(totalCategories,totalPages, paginatedCategories , page);    
+    );   
 
     const prevHandler = () => {
         setPage( prev => prev - 1)

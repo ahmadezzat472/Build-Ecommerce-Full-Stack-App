@@ -28,6 +28,8 @@ import { selectNetwork } from '../../app/features/networkSlice'
 import { useSelector } from 'react-redux'
 import { useAddCategorySliceMutation, useDeleteCategorySliceMutation, useGetCategoriesSliceQuery, useUpdateCategorySliceMutation } from '../../app/services/CategorySlice'
 import { MdProductionQuantityLimits } from 'react-icons/md';
+import Paginator from '../../components/Paginator';
+import PopOver from '../../components/PopOver';
 
 
 const defaultCategory: ICategory = {
@@ -44,26 +46,34 @@ const DashboardCategories = () => {
     const { isOpen:isOpenModalUpdate , onOpen:onOpenModalUpdate, onClose:onCloseModalUpdate } = useDisclosure()
     const { isOpen:isOpenModalAdd , onOpen:onOpenModalAdd, onClose:onCloseModalAdd } = useDisclosure()
 
-    // const [page, setPage] = useState(1)
+    const [page, setPage] = useState(1)
+    const [pageSize] = useState<number>(5); 
     const [categoryClickedId, setCategoryClickedId] = useState<string>("")
     const [categoryClicked, setCategoryClicked] = useState<ICategory>(defaultCategory)
     const [ImageCategory, setImageCategory] = useState<File>()
 
     const {isLoading, data} = useGetCategoriesSliceQuery({})
+    const [ dispatchAddCategory, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddCategorySliceMutation()
     const [ dispatchDeleteCategory, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteCategorySliceMutation()
     const [ dispatchUpdateCategory, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateCategorySliceMutation()
-    const [ dispatchAddCategory, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddCategorySliceMutation()
+
     const { isOnline } = useSelector(selectNetwork)
     
-    
+    // Paginate categories
+    const totalCategories = data?.categories?.length || 0;
+    const totalPages = Math.ceil(totalCategories / pageSize);
+    const paginatedCategories = data?.categories?.slice(
+        (page - 1) * pageSize,
+        page * pageSize
+    );
 
-    // const nextPageHandler = () => {
-    //     setPage( prev => prev + 1 )
-    // }
+    const nextHandler = () => {
+        setPage( prev => prev + 1 )
+    }
 
-    // const prePageHandler = () => {
-    //     setPage( prev => prev - 1 )
-    // }
+    const prevHandler = () => {
+        setPage( prev => prev - 1 )
+    }
 
 
     useEffect( () => {
@@ -125,8 +135,6 @@ const DashboardCategories = () => {
         .catch((error) => console.error("Error:", error));
     }
 
-
-
     if(isLoading || !isOnline) {
         return <ProductTableSkelton />
     }
@@ -154,7 +162,7 @@ const DashboardCategories = () => {
                     </Thead>
                     <Tbody>
                     {
-                        data.categories.map( (cat: ICategory, idx: number) => (
+                        paginatedCategories.map( (cat: ICategory, idx: number) => (
                             <Tr key={cat.id} >
                                 <Td textAlign={"center"}>{idx+1}</Td>
                                 <Td textAlign={"center"}>{cat.name}</Td>
@@ -172,8 +180,11 @@ const DashboardCategories = () => {
                                 </Td>
                                 <Td textAlign={"center"} gap={5}>
                                     <ButtonGroup>
-                                        <Button colorScheme='purple'>
+                                        <Button 
+                                            colorScheme='purple'
+                                        >
                                             <MdProductionQuantityLimits />
+                                            <PopOver />
                                         </Button>
                                         <Button 
                                             colorScheme='red' 
@@ -200,6 +211,15 @@ const DashboardCategories = () => {
                     </Tbody>
                 </Table>
             </TableContainer>
+
+            <Paginator
+                currentPage={page} 
+                totalPages={totalPages} 
+                pageSize={pageSize}
+                onClickNext={nextHandler} 
+                onClickPrev={prevHandler} 
+                isLoading={isLoading}
+            />
 
             {/* Delete Product */}
             <CustomAlertDialog 
