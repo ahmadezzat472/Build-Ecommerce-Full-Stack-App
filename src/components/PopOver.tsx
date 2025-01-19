@@ -1,18 +1,25 @@
-import React from 'react'
 import {
     Popover,
     PopoverTrigger,
     PopoverContent,
     PopoverHeader,
     PopoverBody,
-    PopoverFooter,
     PopoverCloseButton,
     Button,
     Portal,
     Box,
 } from '@chakra-ui/react'
+import { Link } from 'react-router-dom';
 
-const PopOver = () => {
+interface IProps {
+    data: {
+        data: []
+    };
+    isLoading: boolean;
+    catId: string
+}
+
+const PopOver = ({data, isLoading, catId}: IProps) => {
     return (
         <Popover closeOnBlur={false} placement='left' >
             {({ isOpen, onClose }) => (
@@ -22,12 +29,22 @@ const PopOver = () => {
                     </PopoverTrigger>
                     <Portal>
                         <PopoverContent>
-                            <PopoverHeader>This is the header</PopoverHeader>
+                            <PopoverHeader>the number of products</PopoverHeader>
                             <PopoverCloseButton />
                             <PopoverBody>
                                 <Box>
-                                    Hello. Nice to meet you! This is the body of the popover
+                                    total of product: {data && data.data.length}
                                 </Box>
+                                <Button
+                                    as={Link}
+                                    to={'/dashboard/products'}
+                                    state={{ data }} // Passing category ID through state
+                                    mt={4}
+                                    colorScheme='blue'
+                                    onClick={onClose}
+                                >
+                                    go to related product
+                                </Button>
                                 <Button
                                     mt={4}
                                     colorScheme='blue'
@@ -36,7 +53,7 @@ const PopOver = () => {
                                     Close
                                 </Button>
                             </PopoverBody>
-                            <PopoverFooter>This is the footer</PopoverFooter>
+                            {/* <PopoverFooter>This is the footer</PopoverFooter> */}
                         </PopoverContent>
                     </Portal>
                 </>

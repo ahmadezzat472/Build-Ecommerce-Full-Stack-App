@@ -1,13 +1,17 @@
-import { useAddProductSliceMutation, useDeleteProductSliceMutation, useGetFilterProductSliceQuery, useUpdateProductSliceMutation } from '../../app/services/productsSlice'
+/* ___________________ Import ___________________ */
+import { 
+    useAddProductSliceMutation, 
+    useDeleteProductSliceMutation, 
+    useGetFilterProductSliceQuery, 
+    useUpdateProductSliceMutation 
+} from '../../app/services/productsSlice'
 import {
     Table,
     Thead,
     Tbody,
-    Tfoot,
     Tr,
     Th,
     Td,
-    TableCaption,
     TableContainer,
     Button,
     Image,
@@ -39,8 +43,10 @@ import { useSelector } from 'react-redux'
 import Paginator from '../../components/Paginator'
 import { useGetCategoriesSliceQuery } from '../../app/services/CategorySlice'
 import CategorySelectSkelton from '../../components/CategorySelectSkelton'
+import { useLocation } from 'react-router-dom'
 
 
+/* ___________________ Default Product Object ___________________ */
 const defaultProduct: IProduct = {
     id: "",
     name: "",
@@ -62,36 +68,66 @@ const defaultProduct: IProduct = {
     }
 }
 
+
 const DashboardProducts = () => {
-    /* ___________________ State ___________________ */
+    /* ___________________ Modal State ___________________ */
+    //** Manage modal states for opening and closing different modals (Add, Update, General Modal)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen:isOpenModalUpdate , onOpen:onOpenModalUpdate, onClose:onCloseModalUpdate } = useDisclosure()
     const { isOpen:isOpenModalAdd , onOpen:onOpenModalAdd, onClose:onCloseModalAdd } = useDisclosure()
 
+
+    /* ___________________ State ___________________ */
+    //** State for pagination
     const [page, setPage] = useState(1)
+
+    // **State to track the clicked product's ID and details (for editing or deleting)
     const [productClickedId, setProductClickedId] = useState<string>("")
     const [productClickedEdit, setProductClickedEdit] = useState<IProduct>(defaultProduct)
+
+    //** State to handle uploaded images
     const [subImagesProduct, setSubImagesProduct] = useState<File>()
     const [defaultImageProduct, setDefaultImageProduct] = useState<File>()
 
-    const {isLoading, data} = useGetFilterProductSliceQuery(page)
+
+    /* ___________________ API Queries and Mutations ___________________ */
+    //** Fetch categories
     const {isLoading: isLoadingCategories, data: dataCategories} = useGetCategoriesSliceQuery({})
+
+    //** Product-related API mutations
+    const { data: fetchedData, isLoading: isFetchedDataLoading } = useGetFilterProductSliceQuery(page);
     const [ dispatchDeleteProduct, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteProductSliceMutation()
     const [ dispatchUpdateProduct, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateProductSliceMutation()
     const [ dispatchAddProduct, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddProductSliceMutation()
+    
+    //** Online/offline state
     const { isOnline } = useSelector(selectNetwork)
-    
-    
 
+
+    /* ___________________ Handle Data ___________________ */
+    //** Get data passed from the location state (if navigating from another page)
+    const location = useLocation();
+    const locationData = location.state?.data;
+
+    //** Use the data from location if available, otherwise use fetched data
+    const data = locationData || fetchedData;
+    const isLoading = !locationData && isFetchedDataLoading;
+
+
+    /*  ___________________ Pagination Handlers ___________________ */
+    //** Increment the page number to fetch the next page
     const nextPageHandler = () => {
         setPage( prev => prev + 1 )
     }
 
+    //** Decrement the page number to fetch the previous page
     const prePageHandler = () => {
         setPage( prev => prev - 1 )
     }
 
 
+    /* ___________________ Side Effects ___________________ */
+    //** Reset states and close modals upon successful API operations
     useEffect( () => {
         if(isSuccessAdd){
             setProductClickedEdit(defaultProduct)
@@ -110,11 +146,15 @@ const DashboardProducts = () => {
 
     }, [isSuccessDelete, isSuccessUpdate, isSuccessAdd])
 
+
+    /* ___________________ Input Handlers ___________________ */
+    //** Generic handler for text and textarea inputs
     const onChangeHandler: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
         const {name, value} = event.target
         setProductClickedEdit({...productClickedEdit, [name]: value})
     }
 
+    //** Handler for numeric price & stock input
     const onChangeHandlerPrice = (_valueAsString: string, valueAsNumber: number): void => {
         setProductClickedEdit({...productClickedEdit, price: valueAsNumber})
     }
@@ -123,6 +163,7 @@ const DashboardProducts = () => {
         setProductClickedEdit({...productClickedEdit, avaliableItems: valueAsNumber})
     }
 
+    //** Handler for category selection
     const onChangeHandlerCategory:React.ChangeEventHandler<HTMLSelectElement> = (e) => {
         const { value } = e.target
         setProductClickedEdit({
@@ -131,6 +172,7 @@ const DashboardProducts = () => {
         })
     }
     
+    //** Handler for uploading sub-images & default-image
     const subImagesHandler: React.ChangeEventHandler<HTMLInputElement>= (e) => {
         const value = e.target.files?.[0];
         setSubImagesProduct(value)
@@ -141,6 +183,8 @@ const DashboardProducts = () => {
         setDefaultImageProduct(value)
     }
 
+    /* ___________________ API Handlers ___________________ */
+    //** Dispatch an update product mutation
     const handleUpdate = async (id: string, dataForm: FormData) => {
         await dispatchUpdateProduct({
             id,
@@ -148,6 +192,7 @@ const DashboardProducts = () => {
         });
     };
     
+    //** Prepare data and submit the update product form
     const submitUpdateHandler = () => {
         const formData = new FormData()
         formData.append("name", productClickedEdit.name)
@@ -165,6 +210,7 @@ const DashboardProducts = () => {
         handleUpdate(productClickedEdit.id, formData)
     }
     
+    //** Prepare data and submit the add product form
     const submitAddHandler = () => {
         const formData = new FormData()
         formData.append("name", productClickedEdit.name)
@@ -177,29 +223,31 @@ const DashboardProducts = () => {
             formData.append("defaultImage", defaultImageProduct);
         }
         
-        dispatchAddProduct(formData)
-        .unwrap()
-        .then(() => console.log("Product added successfully"))
-        .catch((error) => console.error("Error:", error));
+        dispatchAddProduct(formData);
     }
 
+
+    /* ___________________ Fallback States ___________________ */
+    //** Show a skeleton loader if the page is loading or the user is offline
     if(isLoading || !isOnline) {
         return <ProductTableSkelton />
     }
 
-    if(!data) return <>no data</>
+    //** Show a fallback message if no data is available
+    if(!data) return <>No data available</>
 
+    /* ___________________ Render ___________________ */
     return (
         <>
             <Button 
                 onClick={onOpenModalAdd}
+                mb={"40px"}
             >
-                ADD
+                ADD PRODUCT
             </Button>
 
             <TableContainer>
                 <Table variant='simple'>
-                    <TableCaption>Imperial to metric conversion factors</TableCaption>
                     <Thead >
                         <Tr >
                             <Th textAlign={"center"}>ID</Th>
@@ -217,7 +265,9 @@ const DashboardProducts = () => {
                             <Tr key={product.id} >
                                 <Td textAlign={"center"}>{idx+1}</Td>
                                 <Td textAlign={"center"}>{product.name}</Td>
-                                <Td textAlign={"center"}>{product.category.name}</Td>
+                                <Td textAlign={"center"}>
+                                    {product.category ? product.category.name : "No Category"}
+                                </Td>
                                 <Td display='flex'
                                     alignItems='center'
                                     justifyContent='center'
@@ -260,13 +310,6 @@ const DashboardProducts = () => {
                         ))
                     }
                     </Tbody>
-                    <Tfoot>
-                        <Tr>
-                            <Th>To convert</Th>
-                            <Th>into</Th>
-                            <Th isNumeric>multiply by</Th>
-                        </Tr>
-                    </Tfoot>
                 </Table>
             </TableContainer>
 

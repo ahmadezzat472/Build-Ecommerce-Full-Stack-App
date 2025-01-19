@@ -1,3 +1,4 @@
+/* ___________________ Import ___________________ */
 import {
     Table,
     Thead,
@@ -5,7 +6,6 @@ import {
     Tr,
     Th,
     Td,
-    TableCaption,
     TableContainer,
     Button,
     Image,
@@ -30,8 +30,10 @@ import { useAddCategorySliceMutation, useDeleteCategorySliceMutation, useGetCate
 import { MdProductionQuantityLimits } from 'react-icons/md';
 import Paginator from '../../components/Paginator';
 import PopOver from '../../components/PopOver';
+import { useLazyGetFilterProductByCategorySliceQuery } from '../../app/services/productsSlice';
 
 
+/* ___________________ Default Product Object ___________________ */
 const defaultCategory: ICategory = {
     id: "",
     name: "",
@@ -41,25 +43,27 @@ const defaultCategory: ICategory = {
 }
 
 const DashboardCategories = () => {
-    /* ___________________ State ___________________ */
+     /* ___________________ Modal State ___________________ */
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen:isOpenModalUpdate , onOpen:onOpenModalUpdate, onClose:onCloseModalUpdate } = useDisclosure()
     const { isOpen:isOpenModalAdd , onOpen:onOpenModalAdd, onClose:onCloseModalAdd } = useDisclosure()
 
+    /* ___________________ State ___________________ */
     const [page, setPage] = useState(1)
     const [pageSize] = useState<number>(5); 
     const [categoryClickedId, setCategoryClickedId] = useState<string>("")
     const [categoryClicked, setCategoryClicked] = useState<ICategory>(defaultCategory)
     const [ImageCategory, setImageCategory] = useState<File>()
 
+    /* ___________________ API Queries and Mutations ___________________ */
     const {isLoading, data} = useGetCategoriesSliceQuery({})
+    const [refetch, {isLoading: isLoadingProductByCat, data: dataProductByCat}] = useLazyGetFilterProductByCategorySliceQuery()
     const [ dispatchAddCategory, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddCategorySliceMutation()
     const [ dispatchDeleteCategory, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteCategorySliceMutation()
     const [ dispatchUpdateCategory, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateCategorySliceMutation()
-
     const { isOnline } = useSelector(selectNetwork)
     
-    // Paginate categories
+    /* ___________________ Paginate categories ___________________ */
     const totalCategories = data?.categories?.length || 0;
     const totalPages = Math.ceil(totalCategories / pageSize);
     const paginatedCategories = data?.categories?.slice(
@@ -67,6 +71,7 @@ const DashboardCategories = () => {
         page * pageSize
     );
 
+    /*  ___________________ Pagination Handlers ___________________ */
     const nextHandler = () => {
         setPage( prev => prev + 1 )
     }
@@ -75,7 +80,7 @@ const DashboardCategories = () => {
         setPage( prev => prev - 1 )
     }
 
-
+    /* ___________________ Side Effects ___________________ */
     useEffect( () => {
         if(isSuccessAdd){
             setCategoryClicked(defaultCategory)
@@ -94,32 +99,54 @@ const DashboardCategories = () => {
 
     }, [isSuccessDelete, isSuccessUpdate, isSuccessAdd])
 
+    /* ___________________ Input Handlers ___________________ */
     const onChangeHandler: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
         const {name, value} = event.target
         setCategoryClicked({...categoryClicked, [name]: value})
+        // console.log(value, name, categoryClicked.name);
+        
     }
-
 
     const ImageHandler: React.ChangeEventHandler<HTMLInputElement>= (e) => {
         const value = e.target.files?.[0];
         setImageCategory(value)
     }
 
+    /* ___________________ API Handlers ___________________ */
     const handleUpdate = async (id: string, dataForm: FormData) => {
-        await dispatchUpdateCategory({
-            id,
-            productData: dataForm,
-        });
+        try {
+            const response = await dispatchUpdateCategory({ id, categoryData: dataForm }).unwrap();
+            console.log("Update successful:", response);
+        } catch (error) {
+            console.error("Update failed:", error);
+        }
+        // console.log(dataForm);
+        // await dispatchUpdateCategory({
+        //     id,
+        //     productData: dataForm,
+        // })
+        // .unwrap()
+        // .then(() => console.log("category updated successfully"))
+        // .catch((error) => console.error("Error:", error));
     };
     
     const submitUpdateHandler = () => {
         const formData = new FormData()
+        console.log(categoryClicked.name);
+        
         formData.append("name", categoryClicked.name)
         if (ImageCategory) {
             formData.append("category", ImageCategory);
         }
 
+        // Iterate over FormData and print the key-value pairs
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+        console.log(categoryClicked.id);
+        
         handleUpdate(categoryClicked.id, formData)
+        
     }
     
     const submitAddHandler = () => {
@@ -135,23 +162,29 @@ const DashboardCategories = () => {
         .catch((error) => console.error("Error:", error));
     }
 
+    const handleproducts = (catId: string) => {
+        refetch({catId})
+    }
+
+    /* ___________________ Fallback States ___________________ */
     if(isLoading || !isOnline) {
         return <ProductTableSkelton />
     }
 
     if(!data) return <>no data</>
 
+    /* ___________________ Render ___________________ */
     return (
         <>
             <Button 
                 onClick={onOpenModalAdd}
+                mb={"40px"}
             >
-                ADD
+                ADD CATEGORY
             </Button>
 
             <TableContainer>
                 <Table variant='simple'>
-                    <TableCaption>Imperial to metric conversion factors</TableCaption>
                     <Thead >
                         <Tr >
                             <Th textAlign={"center"}>ID</Th>
@@ -182,9 +215,10 @@ const DashboardCategories = () => {
                                     <ButtonGroup>
                                         <Button 
                                             colorScheme='purple'
+                                            onClick={() => handleproducts(cat.id)}
                                         >
                                             <MdProductionQuantityLimits />
-                                            <PopOver />
+                                            <PopOver isLoading={isLoadingProductByCat} data={dataProductByCat} catId={cat.id} />
                                         </Button>
                                         <Button 
                                             colorScheme='red' 
