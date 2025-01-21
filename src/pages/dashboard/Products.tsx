@@ -28,6 +28,7 @@ import {
     NumberIncrementStepper,
     NumberDecrementStepper,
     Select,
+    useToast,
 } from '@chakra-ui/react'
 import { ICategory, IProduct } from '../../interfaces'
 import ProductTableSkelton from '../../components/ProductTableSkelton'
@@ -70,6 +71,9 @@ const defaultProduct: IProduct = {
 
 
 const DashboardProducts = () => {
+    /* ___________________ Toast ___________________ */
+    const toast = useToast();
+
     /* ___________________ Modal State ___________________ */
     //** Manage modal states for opening and closing different modals (Add, Update, General Modal)
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -92,14 +96,14 @@ const DashboardProducts = () => {
 
     /* ___________________ API Queries and Mutations ___________________ */
     //** Fetch categories
-    const {isLoading: isLoadingCategories, data: dataCategories} = useGetCategoriesSliceQuery({})
+    const { isLoading: isLoadingCategories, data: dataCategories, isError: isErrorCategories, error: errorCategories } = useGetCategoriesSliceQuery({});
 
-    //** Product-related API mutations
-    const { data: fetchedData, isLoading: isFetchedDataLoading } = useGetFilterProductSliceQuery(page);
-    const [ dispatchDeleteProduct, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteProductSliceMutation()
-    const [ dispatchUpdateProduct, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateProductSliceMutation()
-    const [ dispatchAddProduct, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddProductSliceMutation()
-    
+    //** Product-related API calls
+    const { data: fetchedData, isLoading: isFetchedDataLoading, isError: isErrorFetchedData, error: errorFetchedData } = useGetFilterProductSliceQuery(page);
+    const [ dispatchDeleteProduct, { isLoading: isLoadingDelete, isSuccess: isSuccessDelete, isError: isErrorDelete, error: errorDelete } ] = useDeleteProductSliceMutation();
+    const [ dispatchUpdateProduct, { isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate, isError: isErrorUpdate, error: errorUpdate } ] = useUpdateProductSliceMutation();
+    const [ dispatchAddProduct, { isLoading: isLoadingAdd, isSuccess: isSuccessAdd, isError: isErrorAdd, error: errorAdd } ] = useAddProductSliceMutation();
+
     //** Online/offline state
     const { isOnline } = useSelector(selectNetwork)
 
@@ -129,22 +133,103 @@ const DashboardProducts = () => {
     /* ___________________ Side Effects ___________________ */
     //** Reset states and close modals upon successful API operations
     useEffect( () => {
+        //* Handle Success
         if(isSuccessAdd){
             setProductClickedEdit(defaultProduct)
             onCloseModalAdd()
+            toast({
+                title: 'Product Created Successfully.',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            })
         }
 
         if(isSuccessDelete){
             setProductClickedId("")
             onClose()
+            toast({
+                title: 'Product Deleted Successfully.',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            })
         }
         
         if(isSuccessUpdate){
             setProductClickedEdit(defaultProduct)
             onCloseModalUpdate()
+            toast({
+                title: 'Product Updated Successfully.',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            })
         }
 
-    }, [isSuccessDelete, isSuccessUpdate, isSuccessAdd])
+        //* Handle errors
+        if (isErrorCategories) {
+            toast({
+                title: "Failed to fetch categories",
+                description: 
+                    "status" in errorCategories && "data" in errorCategories ? 
+                    `${errorCategories.status} ${(errorCategories.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+
+        if (isErrorFetchedData) {
+            toast({
+                title: "Failed to fetch products",
+                description: 
+                    "status" in errorFetchedData && "data" in errorFetchedData ? 
+                    `${errorFetchedData.status} ${(errorFetchedData.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                isClosable: true,
+            });
+        }
+
+        if (isErrorDelete) {
+            toast({
+                title: "Failed to delete product",
+                description: 
+                    "status" in errorDelete && "data" in errorDelete ? 
+                    `${errorDelete.status} ${(errorDelete.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                isClosable: true,
+            });
+        }
+
+        if (isErrorUpdate) {
+            toast({
+                title: "Failed to update product",
+                description: 
+                    "status" in errorUpdate && "data" in errorUpdate ? 
+                    `${errorUpdate.status} ${(errorUpdate.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                isClosable: true,
+            });
+        }
+
+        if (isErrorAdd) {
+            toast({
+                title: "Failed to add product",
+                description: 
+                    "status" in errorAdd && "data" in errorAdd ? 
+                    `${errorAdd.status} ${(errorAdd.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                isClosable: true,
+            });
+        }
+
+    }, [isSuccessDelete, isSuccessUpdate, isSuccessAdd, isErrorCategories, isErrorFetchedData, isErrorDelete, isErrorUpdate, isErrorAdd])
 
 
     /* ___________________ Input Handlers ___________________ */
@@ -229,14 +314,13 @@ const DashboardProducts = () => {
 
     /* ___________________ Fallback States ___________________ */
     //** Show a skeleton loader if the page is loading or the user is offline
-    if(isLoading || !isOnline) {
-        return <ProductTableSkelton />
+    const isPageLoading = isLoading  || !isOnline;
+    if (isPageLoading) {
+        return <ProductTableSkelton />;
     }
 
-    //** Show a fallback message if no data is available
-    if(!data) return <>No data available</>
 
-    /* ___________________ Render ___________________ */
+    /* ___________________ Render ___________________ */                                                                                                                                                                                                            
     return (
         <>
             <Button 
@@ -261,53 +345,57 @@ const DashboardProducts = () => {
                     </Thead>
                     <Tbody>
                     {
-                        data.data.map( (product: IProduct, idx: number) => (
-                            <Tr key={product.id} >
-                                <Td textAlign={"center"}>{idx+1}</Td>
-                                <Td textAlign={"center"}>{product.name}</Td>
-                                <Td textAlign={"center"}>
-                                    {product.category ? product.category.name : "No Category"}
-                                </Td>
-                                <Td display='flex'
-                                    alignItems='center'
-                                    justifyContent='center'
-                                >
-                                    <Image 
-                                        borderRadius={"full"}
-                                        objectFit={"cover"}
-                                        boxSize={"40px"}
-                                        alt={product.name}
-                                        src={product.defaultImage.url}
-                                    />
-                                </Td>
-                                <Td textAlign={"center"}>{product.price}</Td>
-                                <Td textAlign={"center"}>{product.avaliableItems}</Td>
-                                <Td textAlign={"center"} gap={5}>
-                                    <ButtonGroup>
-                                        <Button colorScheme='purple'>
-                                            <IoEyeOutline />
-                                        </Button>
-                                        <Button 
-                                            colorScheme='red' 
-                                            onClick={() => {
-                                                setProductClickedId(product.id)
-                                                onOpen()
-                                            }}>
-                                            <RiDeleteBin6Line /> 
-                                        </Button>
-                                        <Button 
-                                            colorScheme='orange'
-                                            onClick={() => {
-                                                setProductClickedEdit(product)
-                                                onOpenModalUpdate()
-                                            }}
-                                        >
-                                            <FaPen />
-                                        </Button>
-                                    </ButtonGroup>
-                                </Td>
-                            </Tr>
-                        ))
+                        data ? (
+                            data.data.map( (product: IProduct, idx: number) => (
+                                <Tr key={product.id} >
+                                    <Td textAlign={"center"}>{idx+1}</Td>
+                                    <Td textAlign={"center"}>{product.name}</Td>
+                                    <Td textAlign={"center"}>
+                                        {product.category ? product.category.name : "No Category"}
+                                    </Td>
+                                    <Td display='flex'
+                                        alignItems='center'
+                                        justifyContent='center'
+                                    >
+                                        <Image 
+                                            borderRadius={"full"}
+                                            objectFit={"cover"}
+                                            boxSize={"40px"}
+                                            alt={product.name}
+                                            src={product.defaultImage.url}
+                                        />
+                                    </Td>
+                                    <Td textAlign={"center"}>{product.price}</Td>
+                                    <Td textAlign={"center"}>{product.avaliableItems}</Td>
+                                    <Td textAlign={"center"} gap={5}>
+                                        <ButtonGroup>
+                                            <Button colorScheme='purple'>
+                                                <IoEyeOutline />
+                                            </Button>
+                                            <Button 
+                                                colorScheme='red' 
+                                                onClick={() => {
+                                                    setProductClickedId(product.id)
+                                                    onOpen()
+                                                }}>
+                                                <RiDeleteBin6Line /> 
+                                            </Button>
+                                            <Button 
+                                                colorScheme='orange'
+                                                onClick={() => {
+                                                    setProductClickedEdit(product)
+                                                    onOpenModalUpdate()
+                                                }}
+                                            >
+                                                <FaPen />
+                                            </Button>
+                                        </ButtonGroup>
+                                    </Td>
+                                </Tr>
+                            ))
+                        ) : (
+                            <div style={{margin: "10px 0", fontWeight: "bold"}}>No product Available</div>
+                        )
                     }
                     </Tbody>
                 </Table>
@@ -318,8 +406,8 @@ const DashboardProducts = () => {
                 onClickNext={nextPageHandler}
                 onClickPrev={prePageHandler}
                 currentPage={page}
-                totalPages={data.meta.pagination.totalPages}
-                pageSize={data.meta.pagination.pageSize}
+                totalPages={data && data.meta.pagination.totalPages}
+                pageSize={data && data.meta.pagination.pageSize}
             />
 
             {/* Delete Product */}
@@ -396,10 +484,14 @@ const DashboardProducts = () => {
                                 ) : (
                                     <Select placeholder={productClickedEdit.category.name} onChange={onChangeHandlerCategory}>
                                         {
-                                            dataCategories.categories.map( (cat:ICategory) => 
-                                                <option key={cat.id} value={cat.id} >
-                                                    {cat.name}
-                                                </option> 
+                                            dataCategories ? (
+                                                dataCategories.categories.map( (cat:ICategory) => 
+                                                    <option key={cat.id} value={cat.id} >
+                                                        {cat.name}
+                                                    </option> 
+                                                )
+                                            ) : (
+                                                <p>No Categories Avaliable</p>
                                             )
                                         }
                                     </Select>
@@ -492,10 +584,14 @@ const DashboardProducts = () => {
                                 ) : (
                                     <Select placeholder='Select country' onChange={onChangeHandlerCategory}>
                                         {
-                                            dataCategories.categories.map( (cat:ICategory) => 
-                                                <option key={cat.id} value={cat.id} >
-                                                    {cat.name}
-                                                </option> 
+                                            dataCategories ? (
+                                                dataCategories.categories.map( (cat:ICategory) => 
+                                                    <option key={cat.id} value={cat.id} >
+                                                        {cat.name}
+                                                    </option> 
+                                                )
+                                            ) : (
+                                                <p>No Categories Avaliable</p>
                                             )
                                         }
                                     </Select>

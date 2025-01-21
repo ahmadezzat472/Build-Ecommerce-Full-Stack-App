@@ -15,6 +15,7 @@ import {
     FormControl,
     Input,
     FormLabel,
+    useToast,
 } from '@chakra-ui/react'
 import { ICategory } from '../../interfaces'
 import ProductTableSkelton from '../../components/ProductTableSkelton'
@@ -43,6 +44,9 @@ const defaultCategory: ICategory = {
 }
 
 const DashboardCategories = () => {
+    /* ___________________ Toast ___________________ */
+    const toast = useToast();
+
      /* ___________________ Modal State ___________________ */
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen:isOpenModalUpdate , onOpen:onOpenModalUpdate, onClose:onCloseModalUpdate } = useDisclosure()
@@ -56,15 +60,15 @@ const DashboardCategories = () => {
     const [ImageCategory, setImageCategory] = useState<File>()
 
     /* ___________________ API Queries and Mutations ___________________ */
-    const {isLoading, data} = useGetCategoriesSliceQuery({})
-    const [refetch, {isLoading: isLoadingProductByCat, data: dataProductByCat}] = useLazyGetFilterProductByCategorySliceQuery()
+    const {isLoading, data, isError, error} = useGetCategoriesSliceQuery({})
+    const [refetch, {isLoading: isLoadingProductByCat, data: dataProductByCat, error: errorProductByCat}] = useLazyGetFilterProductByCategorySliceQuery()
     const [ dispatchAddCategory, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddCategorySliceMutation()
     const [ dispatchDeleteCategory, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteCategorySliceMutation()
     const [ dispatchUpdateCategory, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateCategorySliceMutation()
     const { isOnline } = useSelector(selectNetwork)
     
     /* ___________________ Paginate categories ___________________ */
-    const totalCategories = data?.categories?.length || 0;
+    const totalCategories = data?.categories?.length || 0;    
     const totalPages = Math.ceil(totalCategories / pageSize);
     const paginatedCategories = data?.categories?.slice(
         (page - 1) * pageSize,
@@ -82,19 +86,51 @@ const DashboardCategories = () => {
 
     /* ___________________ Side Effects ___________________ */
     useEffect( () => {
+        //* Handle Success
         if(isSuccessAdd){
             setCategoryClicked(defaultCategory)
             onCloseModalAdd()
+            toast({
+                title: 'Product Created Successfully.',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            })
         }
 
         if(isSuccessDelete){
             setCategoryClickedId("")
             onClose()
+            toast({
+                title: 'Product Deleted Successfully.',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            })
         }
         
         if(isSuccessUpdate){
             setCategoryClicked(defaultCategory)
             onCloseModalUpdate()
+            toast({
+                title: 'Product Updated Successfully.',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            })
+        }
+
+        //* Handle errors
+        if (isError) {
+            toast({
+                title: "Failed to fetch categories",
+                description: 
+                    "status" in error && "data" in error ? 
+                    `${error.status} ${(error.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                isClosable: true,
+            });
         }
 
     }, [isSuccessDelete, isSuccessUpdate, isSuccessAdd])
@@ -167,11 +203,12 @@ const DashboardCategories = () => {
     }
 
     /* ___________________ Fallback States ___________________ */
-    if(isLoading || !isOnline) {
-        return <ProductTableSkelton />
+    //** Show a skeleton loader if the page is loading or the user is offline
+    const isPageLoading = isLoading  || !isOnline;
+    if (isPageLoading) {
+        return <ProductTableSkelton />;
     }
 
-    if(!data) return <>no data</>
 
     /* ___________________ Render ___________________ */
     return (
@@ -195,52 +232,56 @@ const DashboardCategories = () => {
                     </Thead>
                     <Tbody>
                     {
-                        paginatedCategories.map( (cat: ICategory, idx: number) => (
-                            <Tr key={cat.id} >
-                                <Td textAlign={"center"}>{idx+1}</Td>
-                                <Td textAlign={"center"}>{cat.name}</Td>
-                                <Td display='flex'
-                                    alignItems='center'
-                                    justifyContent='center'
-                                >
-                                    <Image 
-                                        borderRadius={"full"}
-                                        objectFit={"cover"}
-                                        boxSize={"40px"}
-                                        alt={cat.name}
-                                        src={cat.image.url}
-                                    />
-                                </Td>
-                                <Td textAlign={"center"} gap={5}>
-                                    <ButtonGroup>
-                                        <Button 
-                                            colorScheme='purple'
-                                            onClick={() => handleproducts(cat.id)}
-                                        >
-                                            <MdProductionQuantityLimits />
-                                            <PopOver isLoading={isLoadingProductByCat} data={dataProductByCat} catId={cat.id} />
-                                        </Button>
-                                        <Button 
-                                            colorScheme='red' 
-                                            onClick={() => {
-                                                setCategoryClickedId(cat.id)
-                                                onOpen()
-                                            }}>
-                                            <RiDeleteBin6Line /> 
-                                        </Button>
-                                        <Button 
-                                            colorScheme='orange'
-                                            onClick={() => {
-                                                setCategoryClicked(cat)
-                                                onOpenModalUpdate()
-                                            }}
-                                        >
-                                            <FaPen />
-                                        </Button>
-                                    </ButtonGroup>
-                                </Td>
-                            </Tr>
-                        ))
+                        paginatedCategories ? (
+                            paginatedCategories.map( (cat: ICategory, idx: number) => (
+                                <Tr key={cat.id} >
+                                    <Td textAlign={"center"}>{idx+1}</Td>
+                                    <Td textAlign={"center"}>{cat.name}</Td>
+                                    <Td display='flex'
+                                        alignItems='center'
+                                        justifyContent='center'
+                                    >
+                                        <Image 
+                                            borderRadius={"full"}
+                                            objectFit={"cover"}
+                                            boxSize={"40px"}
+                                            alt={cat.name}
+                                            src={cat.image.url}
+                                        />
+                                    </Td>
+                                    <Td textAlign={"center"} gap={5}>
+                                        <ButtonGroup>
+                                            <Button 
+                                                colorScheme='purple'
+                                                onClick={() => handleproducts(cat.id)}
+                                            >
+                                                <MdProductionQuantityLimits />
+                                                <PopOver isLoading={isLoadingProductByCat} data={dataProductByCat} error={errorProductByCat} />
+                                            </Button>
+                                            <Button 
+                                                colorScheme='red' 
+                                                onClick={() => {
+                                                    setCategoryClickedId(cat.id)
+                                                    onOpen()
+                                                }}>
+                                                <RiDeleteBin6Line /> 
+                                            </Button>
+                                            <Button 
+                                                colorScheme='orange'
+                                                onClick={() => {
+                                                    setCategoryClicked(cat)
+                                                    onOpenModalUpdate()
+                                                }}
+                                            >
+                                                <FaPen />
+                                            </Button>
+                                        </ButtonGroup>
+                                    </Td>
+                                </Tr>
+                            ))
+                        ) : (
+                            <div style={{margin: "10px 0", fontWeight: "bold"}}>No Categories Available</div>
+                        )
                     }
                     </Tbody>
                 </Table>

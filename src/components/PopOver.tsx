@@ -8,7 +8,11 @@ import {
     Button,
     Portal,
     Box,
+    Skeleton,
 } from '@chakra-ui/react'
+import { SerializedError } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 interface IProps {
@@ -16,12 +20,17 @@ interface IProps {
         data: []
     };
     isLoading: boolean;
-    catId: string
+    error: FetchBaseQueryError | SerializedError | undefined;
 }
 
-const PopOver = ({data, isLoading, catId}: IProps) => {
+const PopOver = ({data, isLoading, error}: IProps) => {
+    const initRef = useRef<HTMLButtonElement>(null)
     return (
-        <Popover closeOnBlur={false} placement='left' >
+        <Popover 
+            closeOnBlur={false}
+            placement='left' 
+            initialFocusRef={initRef}
+        >
             {({ isOpen, onClose }) => (
                 <>
                     <PopoverTrigger>
@@ -33,13 +42,19 @@ const PopOver = ({data, isLoading, catId}: IProps) => {
                             <PopoverCloseButton />
                             <PopoverBody>
                                 <Box>
-                                    total of product: {data && data.data.length}
+                                    {isLoading ? (
+                                            <Skeleton height="17px" width={"150px"} />
+                                        ) : (
+                                            <>total of product: {error ? 0 : data && data.data.length }</>
+                                        )
+                                    }
                                 </Box>
                                 <Button
                                     as={Link}
                                     to={'/dashboard/products'}
                                     state={{ data }} // Passing category ID through state
                                     mt={4}
+                                    mr={4}
                                     colorScheme='blue'
                                     onClick={onClose}
                                 >
@@ -47,13 +62,13 @@ const PopOver = ({data, isLoading, catId}: IProps) => {
                                 </Button>
                                 <Button
                                     mt={4}
-                                    colorScheme='blue'
+                                    colorScheme='red'
                                     onClick={onClose}
+                                    ref={initRef}
                                 >
                                     Close
                                 </Button>
                             </PopoverBody>
-                            {/* <PopoverFooter>This is the footer</PopoverFooter> */}
                         </PopoverContent>
                     </Portal>
                 </>

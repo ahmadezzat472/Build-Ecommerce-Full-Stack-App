@@ -23,12 +23,13 @@ const Paginator = ({
     data: categories,
     setCategoryClickedId,
 }: IProps) => {
+    
     return (
         <Box display="flex" justifyContent="center" alignItems="center" mt={30} mb={50}>
             <Text fontSize="sm" color="gray.600" mx={3}>
                 Page <Text as="span" mx={1} fontWeight="semibold" >{currentPage}</Text> to
-                <Text as="span" mx={1} fontWeight="semibold" >{totalPages}</Text> of
-                <Text as="span" mx={1} fontWeight="semibold" >{pageSize}</Text> Records
+                <Text as="span" mx={1} fontWeight="semibold" >{totalPages == 0 ? 1 : totalPages}</Text> of
+                <Text as="span" mx={1} fontWeight="semibold" >{totalPages == 0 ? 0 : pageSize}</Text> Records
             </Text>
 
             <Button
@@ -92,7 +93,7 @@ const Paginator = ({
                 mr={3}
                 _hover={{ bg: "indigo.600", color: "white" }}
                 _disabled={{ bg: "gray.400", cursor: "not-allowed", _hover: { bg: "gray.400" } }}
-                disabled={currentPage === totalPages || isLoading}
+                disabled={currentPage === totalPages || totalPages === 0 || isLoading}
                 onClick={onClickNext}
             >
                 Next
