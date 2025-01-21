@@ -17,11 +17,15 @@ export const productApiSlice = createApi({
                 }
             },
             providesTags: ["Product"],
+        }),
 
-            // providesTags: (result) =>
-            //     result
-            //         ? [...result.data.map(({ id } : {id: number} ) => ({ type: 'Product' as const, id })), 'Product']
-            //         : ['Product'],
+        getOneProductSlice: builder.query({
+            query: (id) => {
+                return {
+                    url: `product/${id}`,
+                }
+            },
+            providesTags: ["Product"],
         }),
 
         getFilterProductSlice: builder.query({
@@ -83,4 +87,4 @@ export const productApiSlice = createApi({
     }),
 })
 
-export const { useGetAllProductSliceQuery, useGetFilterProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation, useAddProductSliceMutation, useGetFilterProductByCategorySliceQuery, useLazyGetFilterProductByCategorySliceQuery } = productApiSlice;
+export const { useGetAllProductSliceQuery, useGetOneProductSliceQuery, useGetFilterProductSliceQuery, useDeleteProductSliceMutation, useUpdateProductSliceMutation, useAddProductSliceMutation, useGetFilterProductByCategorySliceQuery, useLazyGetFilterProductByCategorySliceQuery } = productApiSlice;
