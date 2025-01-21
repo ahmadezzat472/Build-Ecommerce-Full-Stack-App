@@ -16,6 +16,7 @@ import {
     Input,
     FormLabel,
     useToast,
+    Container,
 } from '@chakra-ui/react'
 import { ICategory } from '../../interfaces'
 import ProductTableSkelton from '../../components/ProductTableSkelton'
@@ -212,7 +213,7 @@ const DashboardCategories = () => {
 
     /* ___________________ Render ___________________ */
     return (
-        <>
+        <Container py={5} maxW={'container.lg'}>
             <Button 
                 onClick={onOpenModalAdd}
                 mb={"40px"}
@@ -376,7 +377,7 @@ const DashboardCategories = () => {
                     </FormControl>
                 </ModalBody>
             </CustomModal>
-        </>
+        </Container>
     )
 }
 

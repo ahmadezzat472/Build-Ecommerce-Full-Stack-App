@@ -29,12 +29,12 @@ import {
     NumberDecrementStepper,
     Select,
     useToast,
+    Container,
 } from '@chakra-ui/react'
 import { ICategory, IProduct } from '../../interfaces'
 import ProductTableSkelton from '../../components/ProductTableSkelton'
 import CustomAlertDialog from '../../components/AlertDialog'
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { IoEyeOutline } from 'react-icons/io5'
 import { FaPen } from 'react-icons/fa6'
 import { useEffect, useState } from 'react'
 import CustomModal from '../../components/Modal'
@@ -322,7 +322,7 @@ const DashboardProducts = () => {
 
     /* ___________________ Render ___________________ */                                                                                                                                                                                                            
     return (
-        <>
+        <Container py={5} maxW={'container.lg'}>
             <Button 
                 onClick={onOpenModalAdd}
                 mb={"40px"}
@@ -369,9 +369,6 @@ const DashboardProducts = () => {
                                     <Td textAlign={"center"}>{product.avaliableItems}</Td>
                                     <Td textAlign={"center"} gap={5}>
                                         <ButtonGroup>
-                                            <Button colorScheme='purple'>
-                                                <IoEyeOutline />
-                                            </Button>
                                             <Button 
                                                 colorScheme='red' 
                                                 onClick={() => {
@@ -622,7 +619,7 @@ const DashboardProducts = () => {
                     </FormControl>
                 </ModalBody>
             </CustomModal>
-        </>
+        </Container>
     )
 }
 
