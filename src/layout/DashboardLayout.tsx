@@ -25,7 +25,6 @@ import {
     FiTrendingUp,
     FiCompass,
     FiMenu,
-    FiBell,
     FiChevronDown,
 } from 'react-icons/fi'
 import { IconType } from 'react-icons'

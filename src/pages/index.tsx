@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { GoCodescanCheckmark } from 'react-icons/go'
 import { Link } from 'react-router-dom'
+import Features from '../components/Features'
 
 const HomePage = () => {
     return (
@@ -40,23 +41,27 @@ const HomePage = () => {
                                 position: 'absolute',
                                 bottom: 1,
                                 left: 0,
-                                bg: 'red.400',
+                                bg: 'green.500',
                                 zIndex: -1,
                             }}
                         >
                             Write once,
                         </Text>
+
                         <br />
-                        <Text as={'span'} color={'red.400'}>
+
+                        <Text as={'span'} color={'gray.350'}>
                             use everywhere!
                         </Text>
                     </Heading>
+
                     <Text color={'gray.500'}>
                         Snippy is a rich coding snippets app that lets you create your own code
                         snippets, categorize them, and even sync them in the cloud so you can use them
                         anywhere. All that is free!
                     </Text>
-                    <Stack spacing={{ base: 4, sm: 6 }} direction={{ base: 'column', sm: 'row' }}>
+
+                    <Stack spacing={{ base: 3, sm: 4 }} direction={{ base: 'column', sm: 'row' }}>
                         <Button
                             as={Link}
                             to={"login"}
@@ -65,8 +70,8 @@ const HomePage = () => {
                             fontWeight={'normal'}
                             px={6}
                             colorScheme={'red'}
-                            bg={'red.400'}
-                            _hover={{ bg: 'red.500' }}
+                            bg={'green.400'}
+                            _hover={{ bg: 'green.700' }}
                         >
                             <Text fontWeight={"bold"}>Get started</Text>
                         </Button>
@@ -83,6 +88,7 @@ const HomePage = () => {
                         </Button>
                     </Stack>
                 </Stack>
+
                 <Flex
                     flex={1}
                     justify={'center'}
@@ -91,13 +97,13 @@ const HomePage = () => {
                     w={'full'}
                 >
                     <Blob
-                        w={'150%'}
+                        w={'100%'}
                         h={'150%'}
                         position={'absolute'}
                         top={'-20%'}
                         left={0}
                         zIndex={-1}
-                        color={useColorModeValue('red.50', 'red.400')}
+                        color={useColorModeValue('green.50', 'green.700')}
                     />
                     <Box
                         position={'relative'}
@@ -131,6 +137,7 @@ const HomePage = () => {
                     </Box>
                 </Flex>
             </Stack>
+            <Features />
         </Container>
     )
 }

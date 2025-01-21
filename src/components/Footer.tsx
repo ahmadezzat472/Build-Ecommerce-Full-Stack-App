@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Box,
   chakra,
@@ -16,6 +14,7 @@ import { ReactNode } from 'react'
 import { FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa'
 import { BiMailSend } from 'react-icons/bi'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Logo = (props: any) => {
   return (
     <svg height={32} viewBox="0 0 120 28" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -73,9 +72,9 @@ const ListHeader = ({ children }: { children: ReactNode }) => {
 const Footer = () => {
   return (
     <Box
-      bg={useColorModeValue('gray.50', 'gray.900')}
+      bg={useColorModeValue('gray.200', 'gray.900')}
       color={useColorModeValue('gray.700', 'gray.200')}>
-      <Container as={Stack} maxW={'6xl'} py={10}>
+      <Container as={Stack} maxW={'7xl'} py={10}>
         <SimpleGrid
           templateColumns={{ sm: '1fr 1fr', md: '2fr 1fr 1fr 2fr' }}
           spacing={8}>
