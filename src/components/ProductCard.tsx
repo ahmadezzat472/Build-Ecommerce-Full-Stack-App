@@ -69,7 +69,7 @@ const ProductCard = ( {product} : IProps) => {
     
     return (
         <Box
-            maxW={'400px'}
+            maxW={'450px'}
             w={'full'}
             bg={useColorModeValue('white', 'gray.900')}
             boxShadow={'2xl'}
@@ -77,10 +77,10 @@ const ProductCard = ( {product} : IProps) => {
             p={6}
             overflow={'hidden'}
         >
-            <Box h={'210px'} bg={'gray.100'} mt={-6} mx={-6} mb={6} pos={'relative'}>
+            <Box h={'240px'} bg={'gray.100'} mt={-6} mx={-6} mb={6} pos={'relative'}>
                 <Image
                     src={product.defaultImage.url}
-                    // fit={""}
+                    fit={"fill"}
                     alt={product.name}
                     height={"100%"}
                     width={"100%"}
