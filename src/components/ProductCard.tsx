@@ -1,52 +1,164 @@
-import { Card, Image, Text, Button, CardBody, Stack, Heading, CardFooter, ButtonGroup } from "@chakra-ui/react"
 import { IProduct } from "../interfaces";
 import { Link } from "react-router-dom";
+import {
+    Box,
+    Heading,
+    Text,
+    Stack,
+    useColorModeValue,
+    Image,
+    Flex,
+    Tooltip,
+    Icon,
+    chakra,
+    Badge,
+    Button
+} from '@chakra-ui/react'
+import { FiShoppingCart } from "react-icons/fi";
+import { BsStar, BsStarFill, BsStarHalf } from "react-icons/bs";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../app/features/cartSlice";
 
 interface IProps {
     product: IProduct
 }
 
+interface IRating {
+    rating: number
+    numReviews: number
+}
+
+const Rating = ({ rating, numReviews }: IRating) => {
+    return (
+        <Box display="flex" alignItems="center">
+            {
+                Array(5)
+                .fill('')
+                .map((_, i) => {
+                    const roundedRating = Math.round(rating * 2) / 2
+                    if (roundedRating - i >= 1) {
+                        return (
+                            <BsStarFill
+                                key={i}
+                                style={{ marginLeft: '1' }}
+                                color={i < rating ? 'teal.500' : 'gray.300'}
+                            />
+                        )
+                    }
+                    if (roundedRating - i === 0.5) {
+                        return <BsStarHalf key={i} style={{ marginLeft: '1' }} />
+                    }
+                    return <BsStar key={i} style={{ marginLeft: '1' }} />
+                })
+            }
+
+            <Box as="span" ml="2" color="gray.600" fontSize="sm">
+                {numReviews} review{numReviews > 1 && 's'}
+            </Box>
+        </Box>
+    )
+}
+
 const ProductCard = ( {product} : IProps) => {
-    const serverUrl = import.meta.env.VITE_SERVER_URL
-    console.log(product.documentId);
+    //** To Dispatch Action addToCart
+    const dispatch = useDispatch()
+    
+    const addToCartHandler = () => {
+        dispatch(addToCart(product))
+    }
     
     return (
-        <Card maxW='sm' variant={"filled"}>
-            <CardBody>
+        <Box
+            maxW={'400px'}
+            w={'full'}
+            bg={useColorModeValue('white', 'gray.900')}
+            boxShadow={'2xl'}
+            rounded={'md'}
+            p={6}
+            overflow={'hidden'}
+        >
+            <Box h={'210px'} bg={'gray.100'} mt={-6} mx={-6} mb={6} pos={'relative'}>
                 <Image
-                    // src={`${serverUrl}${product.thumbnail.url}`}
-                    src="../../public/thumbnail_images_360fdccef6.jpg"
-                    alt={product.title}
-                    borderRadius='lg'
-                    width={"full"}
-                    maxH={"200px"}
+                    src={product.defaultImage.url}
+                    // fit={""}
+                    alt={product.name}
+                    height={"100%"}
+                    width={"100%"}
                 />
-                <Stack mt='6' spacing='3'>
-                    <Heading size='md'>
-                        {product.title}
-                    </Heading>
-                    <Text>
-                        {product.description}
-                    </Text>
-                    <Text color='blue.600' fontSize='2xl'>
-                        ${product.price}
-                    </Text>
-                </Stack>
-            </CardBody>
-            <CardFooter>
-                <ButtonGroup spacing='2'>
-                    <Button 
-                        variant='solid' 
-                        colorScheme='blue'
-                        as={Link}
-                        to={`/products/${product.id}`}
-                        state={{documentId: product.documentId}}
+            </Box>
+
+            <Stack>
+                <Text
+                    color={'green.500'}
+                    textTransform={'uppercase'}
+                    fontWeight={800}
+                    fontSize={'sm'}
+                    letterSpacing={1.1}
+                >
+                    {product.category.name}
+                </Text>
+                <Heading
+                    color={useColorModeValue('gray.700', 'white')}
+                    fontSize={'2xl'}
+                    fontFamily={'body'}
+                >
+                    {product.name}
+                </Heading>
+                <Text color={'gray.500'}>
+                    {product.description}
+                </Text>
+            </Stack>
+
+            <Box mt={6}>
+                <Flex mt="1" justifyContent="space-between" alignContent="center">
+                    <Box
+                        fontSize="1xl"
+                        fontWeight="semibold"
+                        as="h4"
+                        lineHeight="tight"
+                        isTruncated
+                        mb={2}
                     >
-                        View Details
-                    </Button>
-                </ButtonGroup>
-            </CardFooter>
-        </Card>
+                        Stock:{" "}
+                        <Badge rounded="full" px="2" fontSize="0.8em" colorScheme={product.avaliableItems <= 10 ? "red" : "green"}>
+                            {product.avaliableItems}
+                        </Badge>
+                    </Box>
+                    <Tooltip
+                        label="Add to cart"
+                        bg="gray.200"
+                        placement={'top'}
+                        color={'black'}
+                        fontSize={'14px'}
+                    >
+                        <chakra.a onClick={addToCartHandler} cursor={"pointer"} display={'flex'}>
+                            <Icon as={FiShoppingCart} h={7} w={7} alignSelf={'center'} />
+                        </chakra.a>
+                    </Tooltip>
+                </Flex>
+
+                <Flex justifyContent="space-between" alignContent="center">
+                    <Rating rating={4.2} numReviews={34} />
+                    <Box fontSize="2xl" color={useColorModeValue('gray.800', 'white')}>
+                        <Box as="span" color={'gray.600'} fontSize="lg">
+                            £
+                        </Box>
+                        {product.price.toFixed(2)}
+                    </Box>
+                </Flex>
+            </Box>
+
+            <Button 
+                variant='solid' 
+                colorScheme='blue'
+                as={Link}
+                to={`/products/${product.id}`}
+                w={"full"}
+                mt={6}
+            >
+                View Details
+            </Button>
+        </Box>
     )
 }
 

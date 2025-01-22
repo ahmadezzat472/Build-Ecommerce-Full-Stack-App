@@ -88,7 +88,10 @@ const Navbar = () => {
     }
 
     return (
-        <Box bg={useColorModeValue('gray.200', 'gray.900')} >
+        <Box 
+            bg={useColorModeValue('gray.200', 'gray.900')} 
+            mb={70}
+        >
             <Container py={2} maxW={'7xl'}>
                 <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
                     <IconButton

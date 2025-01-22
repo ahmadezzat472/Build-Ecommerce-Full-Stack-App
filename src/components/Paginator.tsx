@@ -24,19 +24,19 @@ const Paginator = ({
     setCategoryClickedId,
 }: IProps) => {
     return (
-        <Box display="flex" justifyContent="center" alignItems="center" mt={"80px"} mb={"70px"}>
+        <Box display="flex" justifyContent="center" alignItems="center" mb={"70px"}>
             <Text fontSize="sm" color="gray.600" mx={3}>
                 Page{" "}
                 <Text as="span" mx={1} fontWeight="semibold" >
-                    <Badge>{currentPage}</Badge>
+                    <Badge colorScheme="green">{currentPage}</Badge>
                 </Text> 
                 {" "}to{" "}
                 <Text as="span" mx={1} fontWeight="semibold" >
-                    <Badge>{totalPages == 0 ? 1 : totalPages}</Badge>
+                    <Badge colorScheme="green">{totalPages == 0 ? 1 : totalPages}</Badge>
                 </Text> 
                 {" "}of{" "}
                 <Text as="span" mx={1} fontWeight="semibold" >
-                    <Badge>{totalPages == 0 ? 0 : pageSize}</Badge>
+                    <Badge colorScheme="green">{totalPages == 0 ? 0 : pageSize}</Badge>
                 </Text> 
                 {" "}Records
             </Text>
@@ -99,7 +99,7 @@ const Paginator = ({
                 h={10}
                 fontSize="base"
                 fontWeight="medium"
-                mr={3}
+                ml={3}
                 _hover={{ bg: "indigo.600", color: "white" }}
                 _disabled={{ bg: "gray.400", cursor: "not-allowed", _hover: { bg: "gray.400" } }}
                 disabled={currentPage === totalPages || totalPages === 0 || isLoading}

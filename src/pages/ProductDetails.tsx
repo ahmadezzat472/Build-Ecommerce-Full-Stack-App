@@ -245,7 +245,8 @@ const ProductDetailsPage = () => {
                         _hover={{
                             transform: 'translateY(2px)',
                             boxShadow: 'lg',
-                        }}>
+                        }}
+                    >
                         Add to cart
                     </Button>
 
