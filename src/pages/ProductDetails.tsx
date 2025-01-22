@@ -14,7 +14,9 @@ import {
     Heading, 
     Button,
     Badge,
-    Avatar
+    Avatar,
+    Alert,
+    AlertIcon
 } from "@chakra-ui/react"
 import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch } from "react-redux";
@@ -36,7 +38,7 @@ const ProductDetailsPage = () => {
     const navigate = useNavigate()
 
     /* ___________________ Custom Query ___________________ */ 
-    const { isError, isLoading, data } = useGetOneProductSliceQuery(productId)
+    const { isError, error, isLoading, data } = useGetOneProductSliceQuery(productId)
 
     const dispatch = useDispatch()
 
@@ -47,8 +49,58 @@ const ProductDetailsPage = () => {
     }
 
     /* ___________________ Render ___________________ */
-    if(isLoading) 
+    if(isLoading){
         return <ProductDetailSkelton />
+    }
+
+    if (isError) {
+        const errorMessage =
+            "status" in error && "data" in error 
+                ? `${error.status} ${(error.data as { error: string }).error} || An unexpected error occurred.` 
+                : "An error occurred while fetching product details.";
+                
+        return (
+            <Container maxW={'7xl'}>
+                <Flex 
+                    align="center" 
+                    justify="center" 
+                    h="100vh" 
+                    direction="column" 
+                >
+                <Alert
+                    status="error"
+                    variant="subtle"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                    height="auto"
+                    maxW="lg"
+                    borderRadius="md"
+                    boxShadow="lg"
+                >
+                    <AlertIcon boxSize="40px" mr={0} />
+                    <Heading as="h2" size="lg" mt={4} mb={2}>
+                        Oops! Something Went Wrong
+                    </Heading>
+                    <Text fontSize="md" color="gray.400">
+                        {errorMessage}
+                    </Text>
+                    <Button
+                        mt={6}
+                        size="lg"
+                        onClick={goBack}
+                        colorScheme="red"
+                        variant="solid"
+                        leftIcon={<FaArrowLeftLong />}
+                    >
+                        Go Back
+                    </Button>
+                    </Alert>
+                </Flex>
+            </Container>
+        );
+    }
 
     if (!data) {
         return <p>No product details found.</p>;

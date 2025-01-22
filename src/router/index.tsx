@@ -11,6 +11,7 @@ import Dashboard from "../pages/dashboard";
 import About from "../pages/About";
 import CategoryLists from "../components/CategoryLists";
 import DashboardCategories from "../pages/dashboard/Categories";
+import ErrorHandler from "../components/errors/ErrorHandler";
 
 /* _________________ Cookies _________________ */
 const token = cookieService.get("jwt");
@@ -19,7 +20,7 @@ const router = createBrowserRouter(
     createRoutesFromElements(
         <>  
             {/* Root Layout */}
-            <Route path="/" element={<RootLayout />} >
+            <Route path="/" element={<RootLayout />} errorElement={<ErrorHandler />} >
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<About />} />
                 <Route path="products" element={<CategoryLists />} />
