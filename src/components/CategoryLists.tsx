@@ -4,6 +4,7 @@ import ProductsPage from '../pages/Products';
 import Paginator from './Paginator';
 import { useGetFilterProductByCategorySliceQuery } from '../app/services/productsSlice';
 import CategoryListSkelton from './CategoryListSkelton';
+import { Container } from '@chakra-ui/react';
 
 const CategoryLists = () => {
     const [page, setPage] = useState<number>(1);
@@ -38,7 +39,7 @@ const CategoryLists = () => {
     }
 
     return (
-        <div>
+        <Container maxW={'7xl'}>
             <Paginator
                 data={paginatedCategories} 
                 currentPage={page} 
@@ -50,7 +51,7 @@ const CategoryLists = () => {
                 setCategoryClickedId={setCategoryClickedId} 
             />
             <ProductsPage products={products} isLoading={isLoadingProduct} />
-        </div>
+        </Container>
     )
 }
 

@@ -1,4 +1,4 @@
-import { Box, Text, Button, Icon, Tabs, TabList, Tab } from "@chakra-ui/react";
+import { Box, Text, Button, Icon, Tabs, TabList, Tab, Badge } from "@chakra-ui/react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { ICategory } from "../interfaces";
 
@@ -23,13 +23,22 @@ const Paginator = ({
     data: categories,
     setCategoryClickedId,
 }: IProps) => {
-    
     return (
-        <Box display="flex" justifyContent="center" alignItems="center" mt={30} mb={50}>
+        <Box display="flex" justifyContent="center" alignItems="center" mt={"80px"} mb={"70px"}>
             <Text fontSize="sm" color="gray.600" mx={3}>
-                Page <Text as="span" mx={1} fontWeight="semibold" >{currentPage}</Text> to
-                <Text as="span" mx={1} fontWeight="semibold" >{totalPages == 0 ? 1 : totalPages}</Text> of
-                <Text as="span" mx={1} fontWeight="semibold" >{totalPages == 0 ? 0 : pageSize}</Text> Records
+                Page{" "}
+                <Text as="span" mx={1} fontWeight="semibold" >
+                    <Badge>{currentPage}</Badge>
+                </Text> 
+                {" "}to{" "}
+                <Text as="span" mx={1} fontWeight="semibold" >
+                    <Badge>{totalPages == 0 ? 1 : totalPages}</Badge>
+                </Text> 
+                {" "}of{" "}
+                <Text as="span" mx={1} fontWeight="semibold" >
+                    <Badge>{totalPages == 0 ? 0 : pageSize}</Badge>
+                </Text> 
+                {" "}Records
             </Text>
 
             <Button
@@ -103,4 +112,4 @@ const Paginator = ({
     )
 }
 
-export default Paginator
+export default Paginator;
