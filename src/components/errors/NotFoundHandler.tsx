@@ -1,23 +1,23 @@
 import { useNavigate } from "react-router-dom"
 import { 
-    Box, 
     Flex, 
-    Heading, 
     Text, 
     Button, 
-    VStack, 
     Icon, 
-    useColorModeValue, 
-    Container
+    Container,
+    useColorModeValue,
+    Heading,
+    VStack,
+    Box
 } from "@chakra-ui/react";
-import { FaServer } from "react-icons/fa";
+import { FaBoxOpen } from "react-icons/fa";
 
 interface IProps {
-    statusCode?: number;
-    title?: string
+    title: string;
+    description: string;
 }
 
-const ErrorHandler = ({statusCode = 500, title = "Server Error"}: IProps) => {
+const NotFoundHandler = ({title, description}: IProps) => {
     const navigate = useNavigate();
     const goHome = () => navigate("/");
     const refreshPage = () => window.location.reload();
@@ -31,7 +31,6 @@ const ErrorHandler = ({statusCode = 500, title = "Server Error"}: IProps) => {
                 h="90vh"
             >
                 <VStack spacing={6} textAlign="center">
-                    {/* Error Icon */}
                     <Box
                         bg={useColorModeValue("red.100", "red.700")}
                         p={4}
@@ -40,15 +39,13 @@ const ErrorHandler = ({statusCode = 500, title = "Server Error"}: IProps) => {
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <Icon as={FaServer} color="red.500" boxSize="70px" />
+                    <Icon as={FaBoxOpen} color="red.500" boxSize="70px" />
                     </Box>
-
-                    {/* Error Message */}
                     <Heading size="xl" fontWeight="bold" color={useColorModeValue("gray.800", "white")}>
-                        {`${statusCode} ${title}`}
+                        {title}
                     </Heading>
                     <Text fontSize="lg" color={useColorModeValue("gray.600", "gray.300")}>
-                        Try to refresh this page or feel free to contact us if the problem persists.
+                        {description}
                     </Text>
 
                     {/* Buttons */}
@@ -69,4 +66,4 @@ const ErrorHandler = ({statusCode = 500, title = "Server Error"}: IProps) => {
     )
 }
 
-export default ErrorHandler;
+export default NotFoundHandler;

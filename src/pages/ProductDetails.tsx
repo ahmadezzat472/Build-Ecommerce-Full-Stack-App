@@ -15,16 +15,17 @@ import {
     Button,
     Badge,
     Avatar,
-    Alert,
-    AlertIcon
 } from "@chakra-ui/react"
 import { useNavigate, useParams } from 'react-router-dom'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../app/features/cartSlice";
 import { useGetOneProductSliceQuery } from "../app/services/productsSlice";
 import { MdLocalShipping } from "react-icons/md";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import ProductDetailSkelton from "../components/ProductDetailSkelton";
+import ErrorHandler from "../components/errors/ErrorHandler";
+import { selectNetwork } from "../app/features/networkSlice";
+import NotFoundHandler from "../components/errors/NotFoundHandler";
 
 
 /* ___________________ Type & interface ___________________ */
@@ -37,11 +38,17 @@ const ProductDetailsPage = () => {
     const {productId} =  useParams<IParams>()
     const navigate = useNavigate()
 
-    /* ___________________ Custom Query ___________________ */ 
+    /* ___________________ API Queries and Mutations ___________________ */
+    //** Fetch Product
     const { isError, error, isLoading, data } = useGetOneProductSliceQuery(productId)
 
+    //** To Dispatch Action addToCart
     const dispatch = useDispatch()
 
+    //** Online/offline state
+    const { isOnline } = useSelector(selectNetwork)
+
+    /* ___________________ Handler ___________________ */
     const goBack = () => navigate(-1)
 
     const addToCartHandler = () => {
@@ -49,61 +56,28 @@ const ProductDetailsPage = () => {
     }
 
     /* ___________________ Render ___________________ */
-    if(isLoading){
+    if(isLoading || !isOnline){
         return <ProductDetailSkelton />
     }
 
-    if (isError) {
-        const errorMessage =
-            "status" in error && "data" in error 
-                ? `${error.status} ${(error.data as { error: string }).error} || An unexpected error occurred.` 
-                : "An error occurred while fetching product details.";
-                
-        return (
-            <Container maxW={'7xl'}>
-                <Flex 
-                    align="center" 
-                    justify="center" 
-                    h="100vh" 
-                    direction="column" 
-                >
-                <Alert
-                    status="error"
-                    variant="subtle"
-                    flexDirection="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    textAlign="center"
-                    height="auto"
-                    maxW="lg"
-                    borderRadius="md"
-                    boxShadow="lg"
-                >
-                    <AlertIcon boxSize="40px" mr={0} />
-                    <Heading as="h2" size="lg" mt={4} mb={2}>
-                        Oops! Something Went Wrong
-                    </Heading>
-                    <Text fontSize="md" color="gray.400">
-                        {errorMessage}
-                    </Text>
-                    <Button
-                        mt={6}
-                        size="lg"
-                        onClick={goBack}
-                        colorScheme="red"
-                        variant="solid"
-                        leftIcon={<FaArrowLeftLong />}
-                    >
-                        Go Back
-                    </Button>
-                    </Alert>
-                </Flex>
-            </Container>
-        );
-    }
+    // if (isError) {
+    //     const errorMessage = "data" in error 
+    //         ? `${(error.data as { error: string }).error}` || "An unexpected error occurred." 
+    //         : "An error occurred while fetching product details.";
+    //     const errorStatus = "status" in error ? error.status as number : undefined
+            
+    //     return (
+    //         <ErrorHandler statusCode={errorStatus} title={errorMessage} />
+    //     );
+    // }
 
     if (!data) {
-        return <p>No product details found.</p>;
+        return (
+            <NotFoundHandler 
+                title="No Product Details Found" 
+                description="The product you're looking for isn't available. It might have been removed or never existed" 
+            />
+        )
     }
     
     return (

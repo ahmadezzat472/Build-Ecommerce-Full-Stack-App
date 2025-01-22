@@ -28,7 +28,7 @@ const router = createBrowserRouter(
             </Route>
 
             {/* Dashboard Layout */}
-            <Route path="/dashboard" element={<DashboardLayout />} >
+            <Route path="/dashboard" element={<DashboardLayout />} errorElement={<ErrorHandler />} >
                 <Route index element={<Dashboard />} />
                 <Route path="products" element={<DashboardProducts />} />
                 <Route path="categories" element={<DashboardCategories />} />
@@ -41,6 +41,7 @@ const router = createBrowserRouter(
                         <LoginPage />
                     </ProtectedRoute>
                 } 
+                errorElement={<ErrorHandler />}
             />
 
 
