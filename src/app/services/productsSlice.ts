@@ -22,7 +22,7 @@ export const productApiSlice = createApi({
         getOneProductSlice: builder.query({
             query: (id) => {
                 return {
-                    url: `productt/${id}`,
+                    url: `product/${id}`,
                 }
             },
             providesTags: ["Product"],

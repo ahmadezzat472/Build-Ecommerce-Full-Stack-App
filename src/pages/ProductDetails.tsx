@@ -27,11 +27,15 @@ import ErrorHandler from "../components/errors/ErrorHandler";
 import { selectNetwork } from "../app/features/networkSlice";
 import NotFoundHandler from "../components/errors/NotFoundHandler";
 
-
 /* ___________________ Type & interface ___________________ */
 type IParams = {
     productId: string;
 };
+
+interface IImage {
+    _id: string;
+    url: string;
+}
 
 const ProductDetailsPage = () => {
     /* ___________________ State ___________________ */
@@ -60,16 +64,16 @@ const ProductDetailsPage = () => {
         return <ProductDetailSkelton />
     }
 
-    // if (isError) {
-    //     const errorMessage = "data" in error 
-    //         ? `${(error.data as { error: string }).error}` || "An unexpected error occurred." 
-    //         : "An error occurred while fetching product details.";
-    //     const errorStatus = "status" in error ? error.status as number : undefined
+    if (isError) {
+        const errorMessage = "data" in error 
+            ? `${(error.data as { error: string }).error}` || "An unexpected error occurred." 
+            : "An error occurred while fetching product details.";
+        const errorStatus = "status" in error ? error.status as number : undefined
             
-    //     return (
-    //         <ErrorHandler statusCode={errorStatus} title={errorMessage} />
-    //     );
-    // }
+        return (
+            <ErrorHandler statusCode={errorStatus} title={errorMessage} />
+        );
+    }
 
     if (!data) {
         return (
@@ -114,7 +118,7 @@ const ProductDetailsPage = () => {
                     <Flex justifyContent={"space-between"}>
                         {
                             data.product.images && (
-                                data.product.images.map( (img) => 
+                                data.product.images.map( (img: IImage) => 
                                     <Image
                                         key={img._id}
                                         rounded={'md'}
@@ -233,7 +237,9 @@ const ProductDetailsPage = () => {
                         mt={8}
                         size={'lg'}
                         py={'7'}
+                        // eslint-disable-next-line react-hooks/rules-of-hooks
                         bg={useColorModeValue('gray.900', 'gray.50')}
+                        // eslint-disable-next-line react-hooks/rules-of-hooks
                         color={useColorModeValue('white', 'gray.900')}
                         textTransform={'uppercase'}
                         _hover={{
