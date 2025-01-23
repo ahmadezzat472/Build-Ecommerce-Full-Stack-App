@@ -39,9 +39,11 @@ const CartDrawer = () => {
                 <DrawerBody>
                     {
                         cartItems.length ? (
-                            cartItems.map( (item: ICartProducts) => <CartDrawerItem key={item.id} item={item} />)
+                            cartItems.map( (item: ICartProducts) => 
+                                <CartDrawerItem key={item.id} item={item} />
+                            )
                         ) : (
-                            <Text>No Cart tems</Text>
+                            <Text>No Cart Items</Text>
                         )
                     }
                 </DrawerBody>

@@ -76,6 +76,9 @@ const ProductCard = ( {product} : IProps) => {
             rounded={'md'}
             p={6}
             overflow={'hidden'}
+            display={"flex"}
+            flexDirection={"column"}
+            justifyContent={"space-between"}
         >
             <Box h={'240px'} bg={'gray.100'} mt={-6} mx={-6} mb={6} pos={'relative'}>
                 <Image

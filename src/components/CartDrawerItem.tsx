@@ -7,14 +7,17 @@ interface IProps {
 }
 
 const CartDrawerItem = ({item}: IProps) => {
-    const {id, title, price, quantity, thumbnail} = item
+    const {id, name, price, defaultImage,avaliableItems} = item
     /* ___________________ State ___________________ */
     const dispatch = useDispatch()
-    const serverUrl = import.meta.env.VITE_SERVER_URL
 
-    const removeItemhandler = (id: number) => {
+    const removeItemHandler = (id: number) => {
         dispatch(removeFromCart(id))
     }
+    console.log(item);
+    
+
+    if (!item) return <p> is loading</p>
 
     return (
         <Card 
@@ -23,13 +26,13 @@ const CartDrawerItem = ({item}: IProps) => {
             variant='outline' 
             mt={"10px"}
         >
-            <Image w={"40%"} h={"80px"} src={`${serverUrl}${thumbnail.url}`} />
+            <Image w={"40%"} h={"80px"} src={defaultImage && defaultImage.url} />
             <HStack flexGrow={"2"} >
                 <CardBody padding={"8px"} flexGrow={"2"}>
-                    <Heading size='xs'>{title}</Heading>
+                    <Heading size='xs'>{name}</Heading>
                     <HStack mt={"8px"} justifyContent={"space-between"} alignItems={"center"} flexWrap={"wrap"}>
                         <Text fontWeight={"bold"} fontSize={"xs"}>
-                            Quantity: {quantity} 
+                            Quantity: {avaliableItems} 
                         </Text>
                         <Badge fontSize={"xs"}>${price}</Badge>
                     </HStack>
@@ -39,9 +42,9 @@ const CartDrawerItem = ({item}: IProps) => {
                         fontSize={"sm"} 
                         padding={"2px"} 
                         h={"fit-content"}
-                        onClick={() => removeItemhandler(id)}
+                        onClick={() => removeItemHandler(id)}
                     >
-                        Add to cart
+                        Remove
                     </Button>
                 </CardBody>
             </HStack>
@@ -49,4 +52,4 @@ const CartDrawerItem = ({item}: IProps) => {
     )
 }
 
-export default CartDrawerItem
+export default CartDrawerItem;

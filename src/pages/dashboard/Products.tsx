@@ -85,7 +85,7 @@ const DashboardProducts = () => {
     //** State for pagination
     const [page, setPage] = useState(1)
 
-    // **State to track the clicked product's ID and details (for editing or deleting)
+    //** State to track the clicked product's ID and details (for editing or deleting)
     const [productClickedId, setProductClickedId] = useState<string>("")
     const [productClickedEdit, setProductClickedEdit] = useState<IProduct>(defaultProduct)
 
@@ -106,7 +106,6 @@ const DashboardProducts = () => {
 
     //** Online/offline state
     const { isOnline } = useSelector(selectNetwork)
-
 
     /* ___________________ Handle Data ___________________ */
     //** Get data passed from the location state (if navigating from another page)

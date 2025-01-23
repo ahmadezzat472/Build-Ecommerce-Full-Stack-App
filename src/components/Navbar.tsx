@@ -104,10 +104,11 @@ const Navbar = () => {
                     />
 
                     <Link to={"/"}>
-                    <Box>
-                        <Logo color={useColorModeValue('gray.700', 'white')} />
-                    </Box>
+                        <Box>
+                            <Logo color={useColorModeValue('gray.700', 'white')} />
+                        </Box>
                     </Link>
+
                     <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
                         {Links.map((link) => (
                             <NavLink key={link}>{link}</NavLink>
@@ -128,7 +129,8 @@ const Navbar = () => {
                                             rounded={'full'}
                                             variant={'link'}
                                             cursor={'pointer'}
-                                            minW={0}>
+                                            minW={0}
+                                        >
                                             <Avatar
                                                 size={'sm'}
                                                 src={'https://avatars.dicebear.com/api/male/username.svg'}

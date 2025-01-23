@@ -199,7 +199,7 @@ const DashboardCategories = () => {
         .catch((error) => console.error("Error:", error));
     }
 
-    const handleproducts = (catId: string) => {
+    const handleProducts = (catId: string) => {
         refetch({catId})
     }
 
@@ -254,7 +254,7 @@ const DashboardCategories = () => {
                                         <ButtonGroup>
                                             <Button 
                                                 colorScheme='purple'
-                                                onClick={() => handleproducts(cat.id)}
+                                                onClick={() => handleProducts(cat.id)}
                                             >
                                                 <MdProductionQuantityLimits />
                                                 <PopOver isLoading={isLoadingProductByCat} data={dataProductByCat} error={errorProductByCat} />

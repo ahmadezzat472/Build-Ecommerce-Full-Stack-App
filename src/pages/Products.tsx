@@ -2,6 +2,7 @@ import ProductCard from "../components/ProductCard";
 import { SimpleGrid } from "@chakra-ui/react";
 import { IProduct } from "../interfaces";
 import ProductCardSkelton from "../components/ProductCardSkelton";
+import NotFoundHandler from "../components/errors/NotFoundHandler";
 
 interface IProps {
     products: IProduct[];
@@ -9,7 +10,6 @@ interface IProps {
 }
 
 const ProductsPage = ({products, isLoading} : IProps) => {
-
     if (isLoading) {
         return (
             <SimpleGrid
@@ -25,7 +25,14 @@ const ProductsPage = ({products, isLoading} : IProps) => {
         );
     }
 
-    // if(!products) return <>no data</>
+    if(!products.length){
+        return (
+            <NotFoundHandler 
+                title="NO Product Avaliable" 
+                description="The product you're looking for isn't available. It might have been removed or never existed" 
+            />
+        )
+    } 
 
     return (
         <SimpleGrid
@@ -36,8 +43,7 @@ const ProductsPage = ({products, isLoading} : IProps) => {
             {
                 products.length ? (
                 products.map((product: IProduct) => (
-                
-                    <ProductCard product={product} />
+                    <ProductCard key={product.id} product={product} />
                 ))
                 ) : (
                 <div>No Products</div>

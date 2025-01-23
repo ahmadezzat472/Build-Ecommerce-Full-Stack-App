@@ -4,18 +4,19 @@ import { addItemToCart, clearItemsFromCart, removeItemFromCart } from '../../uti
 
 export interface ICartProducts {
     id: number;
-    quantity: number;
-    documentId: string;
-    title: string;
+    name: string;
     description: string;
     price: number;
-    stock: number;
-    category: {
-        title: string;
-    };
-    thumbnail: {
+    avaliableItems: number;
+    defaultImage: {
         url: string;
+    }
+    category: {
+        image: {
+            url: string;
+        }
     };
+
 } 
 
 interface IInitialState {

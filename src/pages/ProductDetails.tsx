@@ -56,7 +56,7 @@ const ProductDetailsPage = () => {
     const goBack = () => navigate(-1)
 
     const addToCartHandler = () => {
-        dispatch(addToCart(data))
+        dispatch(addToCart(data.product))
     }
 
     /* ___________________ Render ___________________ */
