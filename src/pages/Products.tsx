@@ -3,14 +3,20 @@ import { SimpleGrid } from "@chakra-ui/react";
 import { IProduct } from "../interfaces";
 import ProductCardSkelton from "../components/ProductCardSkelton";
 import NotFoundHandler from "../components/errors/NotFoundHandler";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { SerializedError } from "@reduxjs/toolkit";
 
 interface IProps {
     products: IProduct[];
     isLoading: boolean;
+    isFetching: boolean;
+    isError: boolean;
+    error: FetchBaseQueryError | SerializedError | undefined;
 }
 
-const ProductsPage = ({products, isLoading} : IProps) => {
-    if (isLoading) {
+const ProductsPage = ({products, isLoading, isError, error, isFetching } : IProps) => {
+
+    if (isLoading || isFetching) {
         return (
             <SimpleGrid
                 columns={{ base: 1, md: 2, lg: 3 }}
@@ -25,11 +31,16 @@ const ProductsPage = ({products, isLoading} : IProps) => {
         );
     }
 
-    if(!products.length){
+    //* Handle errors
+    if(!products.length || isError){
         return (
             <NotFoundHandler 
-                title="NO Product Avaliable" 
-                description="The product you're looking for isn't available. It might have been removed or never existed" 
+                title="NO Products Avaliable" 
+                description={
+                    error && "status" in error && "data" in error ? 
+                    `${error.status} ${(error.data as { error: string }).error}` : 
+                    "An unexpected error occurred."
+                }
             />
         )
     } 
