@@ -78,7 +78,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             {LinkItems.map((link) => (
                 <NavItem key={link.name} icon={link.icon} to={link.to}>
                     {link.name}
-
                 </NavItem>
             ))}
         </Box>
@@ -124,10 +123,17 @@ const NavItem = ({ icon, children, to, ...rest }: NavItemProps) => {
 }
 
 /* ___________________ Cookies ___________________ */
-const token = cookieService.get("jwt")
-//* Split the token and decode the payload
-const payloadBase64 = token.split('.')[1];
-const decodedPayload = JSON.parse(atob(payloadBase64));
+const token = cookieService.get("jwt");
+let decodedPayload = { email: '' };
+
+if (token) {
+    try {
+        const payloadBase64 = token.split('.')[1];
+        decodedPayload = JSON.parse(atob(payloadBase64));
+    } catch (error) {
+        console.error("Error decoding token:", error);
+    }
+}
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     return (
@@ -207,7 +213,7 @@ const DashboardLayout = () => {
 
     return (
         <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
-            <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />
+            <SidebarContent onClose={onClose} display={{ base: 'none', md: 'block' }} />
             <Drawer
                 isOpen={isOpen}
                 placement="left"

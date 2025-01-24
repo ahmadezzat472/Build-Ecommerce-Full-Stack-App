@@ -6,6 +6,9 @@ import { useGetFilterProductByCategorySliceQuery } from '../app/services/product
 import CategoryListSkelton from './CategoryListSkelton';
 import { Container } from '@chakra-ui/react';
 import NotFoundHandler from './errors/NotFoundHandler';
+import ProductsSkeleton from './ProductsSkeleton';
+import { useSelector } from 'react-redux';
+import { selectNetwork } from '../app/features/networkSlice';
 
 const CategoryLists = () => {
     /* ___________________ State ___________________ */
@@ -23,7 +26,11 @@ const CategoryLists = () => {
     //** Fetch Products By Category
     const { data: productsData, isLoading: isLoadingProduct, isError: isErrorProduct, error: errorProduct, isFetching } = useGetFilterProductByCategorySliceQuery({catId: categoryClickedId});
 
-    //** if  */
+    //** Online/offline state
+    const { isOnline } = useSelector(selectNetwork)
+
+    //** if not clicked on any Category => the categoryClickedId will be empty so get all products
+    //** if clicked on any Category => the categoryClickedId will be equal id of Category so get all products that related by this Category
     const products = productsData?.products || productsData?.data;
 
     /* ___________________ Paginate Categories ___________________ */
@@ -45,9 +52,12 @@ const CategoryLists = () => {
 
     /* ___________________ Render ___________________ */
     //** Show a skeleton loader if the page is loading or the user is offline
-    if(isLoadingCategories) {
+    if(isLoadingCategories || !isOnline) {
         return (
-            <CategoryListSkelton />
+            <Container maxW={'7xl'}>
+                <CategoryListSkelton />
+                <ProductsSkeleton />
+            </Container>
         )
     }
 

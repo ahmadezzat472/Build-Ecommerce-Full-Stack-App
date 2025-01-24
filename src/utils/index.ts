@@ -18,7 +18,7 @@ export const addItemToCart = (newItem: ICartProducts, cartItems: ICartProducts[]
         })
 
         // ** returns a new array: ** The array contains updated items where the quantity of the matching item is incremented, All other items remain unchanged..
-        return cartItems.map( (item) => item.id === newItem.id ? {...item, quantity: item.quantity+1} : item )
+        return cartItems.map( (item) => item.id === newItem.id ? {...item, quantity: item.avaliableItems+1} : item )
     }
 
     toast({

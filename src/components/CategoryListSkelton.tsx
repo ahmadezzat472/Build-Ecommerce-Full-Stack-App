@@ -22,12 +22,9 @@ const CategoryListSkelton = () => {
             <Skeleton height="20px" width={"70px"} />
             <Skeleton height="20px" width={"70px"} />
             <Skeleton height="20px" width={"70px"} />
-            <Skeleton height="20px" width={"70px"} />
-            <Skeleton height="20px" width={"70px"} />
             <Skeleton h={"30px"} w={"80px"} startColor='blue.300' endColor='blue.600' />
-            {/* <SkeletonText height="150px" noOfLines={1} /> */}
         </Flex>
     )
 }
 
-export default CategoryListSkelton
+export default CategoryListSkelton;

@@ -24,7 +24,7 @@ const Paginator = ({
     setCategoryClickedId,
 }: IProps) => {
     return (
-        <Box display="flex" justifyContent="center" alignItems="center" mb={"70px"}>
+        <Box display="flex" justifyContent="center" alignItems="center" mb={"70px"} mt={30}>
             <Text fontSize="sm" color="gray.600" mx={3}>
                 Page{" "}
                 <Text as="span" mx={1} fontWeight="semibold" >

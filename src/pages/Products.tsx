@@ -1,10 +1,10 @@
 import ProductCard from "../components/ProductCard";
 import { SimpleGrid } from "@chakra-ui/react";
 import { IProduct } from "../interfaces";
-import ProductCardSkelton from "../components/ProductCardSkelton";
 import NotFoundHandler from "../components/errors/NotFoundHandler";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { SerializedError } from "@reduxjs/toolkit";
+import ProductsSkeleton from "../components/ProductsSkeleton";
 
 interface IProps {
     products: IProduct[];
@@ -18,16 +18,7 @@ const ProductsPage = ({products, isLoading, isError, error, isFetching } : IProp
 
     if (isLoading || isFetching) {
         return (
-            <SimpleGrid
-                columns={{ base: 1, md: 2, lg: 3 }}
-                spacing={10}
-            >
-                {
-                    Array.from({ length: 12 }, (_, idx) => (
-                        <ProductCardSkelton key={idx} />
-                    ))
-                }
-            </SimpleGrid>
+            <ProductsSkeleton />
         );
     }
 
