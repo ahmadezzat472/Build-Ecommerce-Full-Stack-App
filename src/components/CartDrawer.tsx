@@ -32,10 +32,10 @@ const CartDrawer = () => {
             finalFocusRef={btnRef}
             
         >
-        <DrawerOverlay 
-            backdropFilter='auto'
-            backdropBlur='2px'
-        />
+            <DrawerOverlay 
+                backdropFilter='auto'
+                backdropBlur='2px'
+            />
             <DrawerContent>
                 <DrawerCloseButton />
                 <DrawerHeader borderBottomWidth='1px'>Cart Items</DrawerHeader>

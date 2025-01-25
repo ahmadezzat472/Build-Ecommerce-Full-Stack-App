@@ -62,10 +62,10 @@ const DashboardCategories = () => {
 
     /* ___________________ API Queries and Mutations ___________________ */
     const {isLoading, data, isError, error} = useGetCategoriesSliceQuery({})
-    const [refetch, {isLoading: isLoadingProductByCat, data: dataProductByCat, error: errorProductByCat}] = useLazyGetFilterProductByCategorySliceQuery()
-    const [ dispatchAddCategory, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd} ] = useAddCategorySliceMutation()
-    const [ dispatchDeleteCategory, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete} ] = useDeleteCategorySliceMutation()
-    const [ dispatchUpdateCategory, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate} ] = useUpdateCategorySliceMutation()
+    const [refetch, {isLoading: isLoadingProductByCat, data: dataProductByCat, isError:isErrorProductByCat, error: errorProductByCat}] = useLazyGetFilterProductByCategorySliceQuery()
+    const [ dispatchAddCategory, {isLoading: isLoadingAdd, isSuccess: isSuccessAdd, isError: isErrorAdd, error: errorAdd} ] = useAddCategorySliceMutation()
+    const [ dispatchDeleteCategory, {isLoading: isLoadingDelete, isSuccess: isSuccessDelete, isError: isErrorDelete, error: errorDelete} ] = useDeleteCategorySliceMutation()
+    const [ dispatchUpdateCategory, {isLoading: isLoadingUpdate, isSuccess: isSuccessUpdate, isError: isErrorUpdate, error: errorUpdate} ] = useUpdateCategorySliceMutation()
     const { isOnline } = useSelector(selectNetwork)
     
     /* ___________________ Paginate categories ___________________ */
@@ -134,7 +134,56 @@ const DashboardCategories = () => {
             });
         }
 
-    }, [isSuccessDelete, isSuccessUpdate, isSuccessAdd])
+        if (isErrorProductByCat) {
+            toast({
+                title: "Failed to fetch categories",
+                description: 
+                    "status" in errorProductByCat && "data" in errorProductByCat ? 
+                    `${errorProductByCat.status} ${(errorProductByCat.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+
+        if (isErrorDelete) {
+            toast({
+                title: "Failed to delete product",
+                description: 
+                    "status" in errorDelete && "data" in errorDelete ? 
+                    `${errorDelete.status} ${(errorDelete.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                isClosable: true,
+            });
+        }
+
+        if (isErrorUpdate) {
+            toast({
+                title: "Failed to update product",
+                description: 
+                    "status" in errorUpdate && "data" in errorUpdate ? 
+                    `${errorUpdate.status} ${(errorUpdate.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                isClosable: true,
+            });
+        }
+
+        if (isErrorAdd) {
+            toast({
+                title: "Failed to add product",
+                description: 
+                    "status" in errorAdd && "data" in errorAdd ? 
+                    `${errorAdd.status} ${(errorAdd.data as { error: string }).error}` : 
+                    "An unexpected error occurred.",
+                status: "error",
+                isClosable: true,
+            });
+        }
+
+    }, [isSuccessDelete, isSuccessUpdate, isSuccessAdd, isError, isErrorProductByCat, isErrorDelete, isErrorUpdate, isErrorAdd])
 
     /* ___________________ Input Handlers ___________________ */
     const onChangeHandler: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {

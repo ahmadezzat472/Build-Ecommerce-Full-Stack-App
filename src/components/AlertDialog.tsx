@@ -20,7 +20,7 @@ interface IProps {
     okTxt?: string;
     variant?: "solid" | "outline" | "ghost" | "link";
     colorScheme?: "gray" | "red" | "orange" | "yellow" | "green" | "teal" | "blue" | "pink";
-    onOkHandler?: (id: string) => void
+    onOkHandler?: () => void
     isLoading?: boolean;
 
 }
