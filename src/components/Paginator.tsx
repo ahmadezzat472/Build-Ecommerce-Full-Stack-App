@@ -23,6 +23,7 @@ const Paginator = ({
     data: categories,
     setCategoryClickedId,
 }: IProps) => {
+    
     return (
         <Box display="flex" justifyContent="center" alignItems="center" mb={"70px"} mt={30}>
             <Text fontSize="sm" color="gray.600" mx={3}>
