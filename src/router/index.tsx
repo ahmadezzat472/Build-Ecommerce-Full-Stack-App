@@ -28,7 +28,15 @@ const router = createBrowserRouter(
             </Route>
 
             {/* Dashboard Layout */}
-            <Route path="/dashboard" element={<DashboardLayout />} errorElement={<ErrorHandler />} >
+            <Route 
+                path="/dashboard" 
+                element={
+                    <ProtectedRoute isAuthenticated={!token} redirectPath="/login" >
+                        <DashboardLayout />
+                    </ProtectedRoute>
+                }   
+                errorElement={<ErrorHandler />} 
+            >
                 <Route index element={<Dashboard />} />
                 <Route path="products" element={<DashboardProducts />} />
                 <Route path="categories" element={<DashboardCategories />} />
