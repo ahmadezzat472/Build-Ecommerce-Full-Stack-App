@@ -49,33 +49,3 @@ const InternetConnectionProvider = ({children}: IProps) => {
 }
 
 export default InternetConnectionProvider;
-
-    // function addToast() {
-    //     toastIdRef.current = toast({
-    //         title: 'Account created.',
-    //         description: "We've created your account for you.",
-    //         status: 'warning',
-    //         duration: null,
-    //         isClosable: true,
-    //         icon: <CiWifiOff />,
-    //     })
-    // }
-
-    // const closeAll = () => toast.closeAll()
-
-    // useEffect( () => {
-    //     // ** navigator.onLine => if online return true else return false
-    //     setIsOnline(navigator.onLine) 
-    // }, [])
-
-    // window.addEventListener("online", () => setIsOnline(true))
-    // window.addEventListener("offline", () => setIsOnline(false))
-
-    // if (!isOnline) {
-    //     addToast();
-    //     return <>{children}</>;
-    // }
-
-    // return (
-    //     children
-    // )
